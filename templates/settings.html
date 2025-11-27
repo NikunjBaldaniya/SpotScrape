@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3">Account Settings</h1>
+        <p class="lead text-secondary">Manage your SpotScrape account preferences</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-person me-2"></i>Account Information</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Username:</strong> <span class="text-secondary">{{ username }}</span></p>
+                        <p><strong>Email:</strong> <span class="text-secondary">{{ email }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Member Since:</strong> <span class="text-secondary">{{ member_since }}</span></p>
+                        <p><strong>Total Extractions:</strong> <span class="text-secondary">{{ total_extractions }}</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock me-2"></i>Security</h4>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="/forgot-password" class="btn btn-outline-primary">
+                        <i class="bi bi-key me-2"></i>Change Password
+                    </a>
+                </div>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-database me-2"></i>Data Management</h4>
+                <div class="d-grid gap-2 d-md-flex">
+                    <button class="btn btn-outline-warning" onclick="clearHistory()">
+                        <i class="bi bi-trash me-2"></i>Clear History
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="deleteAccount()">
+                        <i class="bi bi-person-x me-2"></i>Delete Account
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function clearHistory() {
+    if (confirm('Are you sure you want to clear all your extraction history? This cannot be undone.')) {
+        fetch('/clear-history')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('History cleared successfully', 'success');
+                } else {
+                    showToast('Failed to clear history', 'error');
+                }
+            });
+    }
+}
+
+function deleteAccount() {
+    if (confirm('Are you sure you want to delete your account? This will permanently delete all your data and cannot be undone.')) {
+        fetch('/auth/delete-account', { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Account deleted successfully', 'success');
+                    setTimeout(() => window.location.href = '/', 1000);
+                } else {
+                    showToast('Failed to delete account', 'error');
+                }
+            });
+    }
+}
+</script>
+{% endblock %}

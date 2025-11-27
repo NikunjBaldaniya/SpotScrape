@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block title %}Statistics - SpotScrape Analytics{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5 fade-in">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="bi bi-graph-up me-3"></i>{{ username }}'s Statistics
+            </h1>
+            <p class="lead text-secondary">Your SpotScrape usage since {{ member_since }}</p>
+        </div>
+
+        <!-- Overview Stats -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-4">
+                <div class="stats-card text-center p-4 h-100">
+                    <div class="stat-number">{{ total_extractions or 0 }}</div>
+                    <h6 class="fw-bold">Total Extractions</h6>
+                    <p class="text-secondary small mb-0">All time data extractions</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card text-center p-4 h-100">
+                    <div class="stat-number">{{ unique_tracks or 0 }}</div>
+                    <h6 class="fw-bold">Unique Tracks</h6>
+                    <p class="text-secondary small mb-0">Different songs extracted</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card text-center p-4 h-100">
+                    <div class="stat-number">{{ playlists_count or 0 }}</div>
+                    <h6 class="fw-bold">Playlists</h6>
+                    <p class="text-secondary small mb-0">Playlists analyzed</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stats-card text-center p-4 h-100">
+                    <div class="stat-number">{{ albums_count or 0 }}</div>
+                    <h6 class="fw-bold">Albums</h6>
+                    <p class="text-secondary small mb-0">Albums discovered</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Type Distribution -->
+        <div class="row mb-5">
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-pie-chart me-2"></i>Content Types
+                    </h4>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="bi bi-music-note me-2 text-success"></i>Tracks</span>
+                            <span class="fw-bold">65%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="bi bi-collection me-2 text-primary"></i>Albums</span>
+                            <span class="fw-bold">20%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="bi bi-music-note-list me-2 text-warning"></i>Playlists</span>
+                            <span class="fw-bold">12%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 12%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span><i class="bi bi-person me-2 text-info"></i>Artists</span>
+                            <span class="fw-bold">3%</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 3%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-calendar-week me-2"></i>Weekly Activity
+                    </h4>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Monday</span>
+                            <span class="fw-bold">24</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Tuesday</span>
+                            <span class="fw-bold">18</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Wednesday</span>
+                            <span class="fw-bold">30</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Thursday</span>
+                            <span class="fw-bold">22</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 73%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Friday</span>
+                            <span class="fw-bold">35</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Saturday</span>
+                            <span class="fw-bold">28</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 93%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Sunday</span>
+                            <span class="fw-bold">15</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 50%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Artists & Recent Activity -->
+        <div class="row mb-5">
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-star me-2"></i>Top Artists
+                    </h4>
+                    <div class="d-flex align-items-center mb-3 p-2 rounded" style="background: rgba(29, 185, 84, 0.1);">
+                        <div class="me-3">
+                            <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <span class="fw-bold text-white">1</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">The Weeknd</div>
+                            <div class="text-secondary small">15 extractions</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3 p-2">
+                        <div class="me-3">
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <span class="fw-bold text-white">2</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Dua Lipa</div>
+                            <div class="text-secondary small">12 extractions</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3 p-2">
+                        <div class="me-3">
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <span class="fw-bold text-white">3</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Harry Styles</div>
+                            <div class="text-secondary small">10 extractions</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3 p-2">
+                        <div class="me-3">
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <span class="fw-bold text-white">4</span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Olivia Rodrigo</div>
+                            <div class="text-secondary small">8 extractions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <h4 class="fw-bold mb-4">
+                        <i class="bi bi-clock-history me-2"></i>Recent Activity
+                    </h4>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-music-note text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Blinding Lights</div>
+                            <div class="text-secondary small">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-collection text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">After Hours</div>
+                            <div class="text-secondary small">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-music-note-list text-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Today's Top Hits</div>
+                            <div class="text-secondary small">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-music-note text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Watermelon Sugar</div>
+                            <div class="text-secondary small">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            <i class="bi bi-person text-info" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fw-bold">Taylor Swift</div>
+                            <div class="text-secondary small">3 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="feature-card p-4 text-center">
+            <h4 class="fw-bold mb-3">Export Your Data</h4>
+            <p class="text-secondary mb-4">Download your complete usage statistics and extraction history</p>
+            
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <button class="btn btn-success" onclick="exportStats('json')">
+                    <i class="bi bi-filetype-json me-2"></i>Export as JSON
+                </button>
+                <button class="btn btn-outline-light" onclick="exportStats('csv')">
+                    <i class="bi bi-filetype-csv me-2"></i>Export as CSV
+                </button>
+                <button class="btn btn-outline-light" onclick="exportStats('pdf')">
+                    <i class="bi bi-filetype-pdf me-2"></i>Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportStats(format) {
+    const statsData = {
+        total_extractions: {{ total_extractions or 0 }},
+        unique_tracks: {{ unique_tracks or 0 }},
+        playlists_count: {{ playlists_count or 0 }},
+        albums_count: {{ albums_count or 0 }},
+        export_date: new Date().toISOString(),
+        content_distribution: {
+            tracks: 65,
+            albums: 20,
+            playlists: 12,
+            artists: 3
+        },
+        top_artists: [
+            { name: "The Weeknd", extractions: 15 },
+            { name: "Dua Lipa", extractions: 12 },
+            { name: "Harry Styles", extractions: 10 },
+            { name: "Olivia Rodrigo", extractions: 8 }
+        ]
+    };
+
+    if (format === 'json') {
+        const dataStr = JSON.stringify(statsData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'spotscrape_stats.json';
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast('Statistics exported as JSON!', 'success');
+    } else if (format === 'csv') {
+        let csv = 'Metric,Value\n';
+        csv += `Total Extractions,${statsData.total_extractions}\n`;
+        csv += `Unique Tracks,${statsData.unique_tracks}\n`;
+        csv += `Playlists,${statsData.playlists_count}\n`;
+        csv += `Albums,${statsData.albums_count}\n`;
+        csv += '\nTop Artists,Extractions\n';
+        statsData.top_artists.forEach(artist => {
+            csv += `${artist.name},${artist.extractions}\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'spotscrape_stats.csv';
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast('Statistics exported as CSV!', 'success');
+    } else if (format === 'pdf') {
+        showToast('PDF report generation coming soon!', 'info');
+    }
+}
+</script>
+{% endblock %}

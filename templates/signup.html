@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="feature-card p-4">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-2">Join SpotScrape</h2>
+                <p class="text-secondary">Create your account to save your music discoveries</p>
+            </div>
+
+            <form id="signupForm">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            <i class="bi bi-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        <small class="text-secondary">
+                            Must be 8+ characters with uppercase, lowercase, number, and special character (@$!%*?&)
+                        </small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Security Question</label>
+                    <select class="form-select" id="securityQuestion" required>
+                        <option value="">Choose a security question</option>
+                        <option value="What was your first pet's name?">What was your first pet's name?</option>
+                        <option value="What city were you born in?">What city were you born in?</option>
+                        <option value="What was your mother's maiden name?">What was your mother's maiden name?</option>
+                        <option value="What was your first car?">What was your first car?</option>
+                        <option value="What is your favorite movie?">What is your favorite movie?</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Security Answer</label>
+                    <input type="text" class="form-control" id="securityAnswer" required>
+                    <div class="form-text">This will help you recover your password</div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mb-3" id="signupBtn">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                </button>
+            </form>
+
+            <div class="text-center">
+                <p class="text-secondary">
+                    Already have an account? 
+                    <a href="/signin" class="text-decoration-none">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('signupBtn');
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div>Creating Account...';
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch('/auth/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                security_question: document.getElementById('securityQuestion').value,
+                security_answer: document.getElementById('securityAnswer').value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showToast('Account created successfully!', 'success');
+            setTimeout(() => window.location.href = '/', 1000);
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Sign up failed', 'error');
+    } finally {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    }
+});
+
+// Password toggle functionality
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+    }
+});
+</script>
+{% endblock %}

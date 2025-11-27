@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3">Privacy Policy</h1>
+        <p class="lead text-secondary">How we protect and handle your data</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>Data Collection</h4>
+                <p>SpotScrape collects minimal data to provide our services:</p>
+                <ul>
+                    <li><strong>Account Information:</strong> Username, email, and encrypted password for registered users</li>
+                    <li><strong>Usage Data:</strong> Spotify URLs you extract and extraction history</li>
+                    <li><strong>Technical Data:</strong> Browser type, IP address, and device information for security</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-database me-2"></i>Data Usage</h4>
+                <p>We use your data to:</p>
+                <ul>
+                    <li>Provide Spotify metadata extraction services</li>
+                    <li>Maintain your extraction history and statistics</li>
+                    <li>Improve our service and user experience</li>
+                    <li>Ensure security and prevent abuse</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-lock me-2"></i>Data Protection</h4>
+                <p>Your privacy is important to us:</p>
+                <ul>
+                    <li><strong>Encryption:</strong> Passwords are hashed using SHA-256</li>
+                    <li><strong>No Sharing:</strong> We never sell or share your personal data</li>
+                    <li><strong>Local Storage:</strong> Data is stored securely on our servers</li>
+                    <li><strong>Access Control:</strong> Only you can access your account data</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-person-check me-2"></i>Your Rights</h4>
+                <p>You have full control over your data:</p>
+                <ul>
+                    <li><strong>Access:</strong> View all your stored data anytime</li>
+                    <li><strong>Export:</strong> Download your data in JSON or CSV format</li>
+                    <li><strong>Delete:</strong> Clear your history or delete your account</li>
+                    <li><strong>Update:</strong> Modify your account information</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-cookie me-2"></i>Cookies & Tracking</h4>
+                <p>SpotScrape uses minimal tracking:</p>
+                <ul>
+                    <li><strong>Session Cookies:</strong> To keep you logged in</li>
+                    <li><strong>Theme Preference:</strong> To remember your dark/light mode choice</li>
+                    <li><strong>No Analytics:</strong> We don't use Google Analytics or similar services</li>
+                    <li><strong>No Ads:</strong> No advertising cookies or trackers</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-globe me-2"></i>Third-Party Services</h4>
+                <p>We interact with external services:</p>
+                <ul>
+                    <li><strong>Spotify:</strong> We extract public metadata from Spotify URLs</li>
+                    <li><strong>YouTube:</strong> We find YouTube videos for music previews</li>
+                    <li><strong>CDNs:</strong> Bootstrap and fonts are loaded from CDNs</li>
+                </ul>
+                <p class="text-secondary small mt-2">We don't share your personal data with these services.</p>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Data Retention</h4>
+                <p>How long we keep your data:</p>
+                <ul>
+                    <li><strong>Account Data:</strong> Until you delete your account</li>
+                    <li><strong>Extraction History:</strong> Indefinitely for registered users</li>
+                    <li><strong>Guest Data:</strong> Cleared periodically</li>
+                    <li><strong>Logs:</strong> Security logs kept for 30 days</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="feature-card p-4">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold mb-2">Welcome Back</h2>
+                <p class="text-secondary">Sign in to your SpotScrape account</p>
+            </div>
+
+            <form id="signinForm">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mb-3" id="signinBtn">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </button>
+            </form>
+
+            <div class="text-center">
+                <p class="mb-2">
+                    <a href="/forgot-password" class="text-decoration-none">Forgot Password?</a>
+                </p>
+                <p class="text-secondary">
+                    Don't have an account? 
+                    <a href="/signup" class="text-decoration-none">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('signinForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const btn = document.getElementById('signinBtn');
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div>Signing In...';
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch('/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showToast('Welcome back!', 'success');
+            setTimeout(() => window.location.href = '/', 1000);
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Sign in failed', 'error');
+    } finally {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    }
+});
+</script>
+{% endblock %}

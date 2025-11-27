@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}About SpotScrape - Modern Spotify Data Extractor{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-5 fade-in">
+            <h1 class="display-4 fw-bold mb-4">About SpotScrape</h1>
+            <p class="lead text-secondary">The modern way to extract Spotify metadata without API limitations</p>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-rocket-takeoff me-3" style="font-size: 2rem; color: var(--accent-green);"></i>
+                        <h4 class="fw-bold mb-0">Our Mission</h4>
+                    </div>
+                    <p class="text-secondary">To provide developers, researchers, and music enthusiasts with a simple, fast, and reliable way to extract Spotify metadata without the complexity of API authentication.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-gear-fill me-3" style="font-size: 2rem; color: var(--accent-green);"></i>
+                        <h4 class="fw-bold mb-0">How It Works</h4>
+                    </div>
+                    <p class="text-secondary">SpotScrape uses advanced web scraping techniques to extract publicly available metadata from Spotify's web interface, providing you with clean, structured data.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-card p-5 mb-5">
+            <h3 class="fw-bold mb-4 text-center">Key Features</h3>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>No API key required</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>Extract songs, albums, playlists</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>Download data as JSON</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>Search history tracking</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>Mobile-responsive design</span>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-3 text-success"></i>
+                        <span>Dark/Light theme support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="stats-card text-center p-4">
+                    <div class="stat-number">100%</div>
+                    <h6 class="fw-bold">Free Forever</h6>
+                    <p class="text-secondary small mb-0">No hidden costs or premium plans</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stats-card text-center p-4">
+                    <div class="stat-number">∞</div>
+                    <h6 class="fw-bold">Unlimited Extractions</h6>
+                    <p class="text-secondary small mb-0">No rate limits or usage restrictions</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="stats-card text-center p-4">
+                    <div class="stat-number">24/7</div>
+                    <h6 class="fw-bold">Always Available</h6>
+                    <p class="text-secondary small mb-0">Extract data anytime, anywhere</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-card p-5 text-center">
+            <h3 class="fw-bold mb-3">Built with Modern Technology</h3>
+            <p class="text-secondary mb-4">SpotScrape is built using cutting-edge web technologies to ensure fast, reliable, and secure data extraction.</p>
+            
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <span class="badge bg-secondary p-2">Python Flask</span>
+                <span class="badge bg-secondary p-2">Bootstrap 5</span>
+                <span class="badge bg-secondary p-2">SQLite</span>
+                <span class="badge bg-secondary p-2">Beautiful Soup</span>
+                <span class="badge bg-secondary p-2">Responsive Design</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

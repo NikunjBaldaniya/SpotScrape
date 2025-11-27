@@ -1,0 +1,760 @@
+{% extends 'base.html' %}
+
+{% block title %}Playlist Extractor - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="text-center mb-5 fade-in">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="bi bi-music-note-list me-3"></i>Playlist Extractor
+            </h1>
+            <p class="lead text-secondary">Extract complete playlist information including all tracks, artists, and
+                metadata</p>
+        </div>
+
+        <!-- Playlist Search -->
+        <div class="feature-card p-4 mb-5">
+            <div class="search-box">
+                <div class="input-group">
+                    <input type="text" id="playlistUrl" class="form-control"
+                        placeholder="Paste Spotify playlist URL here..." aria-label="Playlist URL">
+                    <button class="btn btn-success" type="button" onclick="extractPlaylist()" id="extractBtn">
+                        <i class="bi bi-music-note-list me-2"></i>Extract Playlist
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-3 text-center">
+                <small class="text-secondary">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Supports public Spotify playlists. Private playlists may have limited data.
+                </small>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="playlistLoading" class="d-none text-center my-5">
+            <div class="d-flex flex-column align-items-center">
+                <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5 class="text-success mb-2">Scraping Playlist Data</h5>
+                <p class="text-secondary mb-3">This may take a few moments for large playlists...</p>
+                <div class="progress" style="width: 300px; height: 6px;">
+                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar"
+                        style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="playlistError" class="alert alert-danger d-none fade-in" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span id="playlistErrorText"></span>
+        </div>
+
+        <!-- Playlist Result -->
+        <div id="playlistResult" class="d-none fade-in">
+            <!-- Playlist Header -->
+            <div class="feature-card mb-4">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <img id="playlistImage" src="" class="img-fluid w-100 h-100"
+                            style="object-fit: cover; min-height: 200px;" alt="Playlist Cover">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-warning me-2">Playlist</span>
+                                <small class="text-secondary">Extracted just now</small>
+                            </div>
+                            <h2 class="fw-bold mb-3" id="playlistTitle">Playlist Name</h2>
+                            <p class="text-secondary mb-3" id="playlistDesc">Description</p>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-music-note me-2 text-success"></i>
+                                        <span><strong id="trackCount">0</strong> tracks</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock me-2 text-success"></i>
+                                        <span id="totalDuration">0 min</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person me-2 text-success"></i>
+                                        <span id="playlistOwner">Owner</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center flex-wrap gap-2">
+                                <a id="playlistLink" href="#" target="_blank" class="btn btn-outline-success">
+                                    <i class="bi bi-spotify me-2"></i>Open in Spotify
+                                </a>
+                                <button onclick="downloadPlaylistData()" class="btn btn-success">
+                                    <i class="bi bi-download me-2"></i>Download JSON
+                                </button>
+                                <button onclick="exportToCSV()" class="btn btn-outline-light">
+                                    <i class="bi bi-filetype-csv me-2"></i>Export CSV
+                                </button>
+                                <button onclick="sharePlaylist()" class="btn btn-outline-light">
+                                    <i class="bi bi-share me-2"></i>Share
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Track List -->
+            <div class="feature-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">
+                            <i class="bi bi-list-ol me-2"></i>Track List
+                        </h4>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <div class="input-group" style="width: 250px;">
+                                <input type="text" id="trackSearch" class="form-control form-control-sm"
+                                    placeholder="Search tracks..." onkeyup="filterTracks()">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-light" onclick="sortTracks('title')">
+                                <i class="bi bi-sort-alpha-down me-1"></i>Title
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" onclick="sortTracks('artist')">
+                                <i class="bi bi-person me-1"></i>Artist
+                            </button>
+                            <button class="btn btn-sm btn-outline-light" onclick="sortTracks('duration')">
+                                <i class="bi bi-clock me-1"></i>Duration
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="tracksList" class="tracks-container">
+                        <!-- Tracks will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Playlists -->
+        <div class="mt-5">
+            <h3 class="fw-bold mb-4 text-center">Try These Sample Playlists</h3>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card p-3 text-center h-100">
+                        <i class="bi bi-fire" style="font-size: 2rem; color: var(--accent-green);"></i>
+                        <h6 class="fw-bold mt-2">Today's Top Hits</h6>
+                        <p class="text-secondary small">Popular songs right now</p>
+                        <button class="btn btn-sm btn-outline-light" onclick="loadSamplePlaylist('tophits')">Try
+                            It</button>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card p-3 text-center h-100">
+                        <i class="bi bi-heart-fill" style="font-size: 2rem; color: var(--accent-green);"></i>
+                        <h6 class="fw-bold mt-2">Chill Vibes</h6>
+                        <p class="text-secondary small">Relaxing background music</p>
+                        <button class="btn btn-sm btn-outline-light" onclick="loadSamplePlaylist('chill')">Try
+                            It</button>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="feature-card p-3 text-center h-100">
+                        <i class="bi bi-lightning-fill" style="font-size: 2rem; color: var(--accent-green);"></i>
+                        <h6 class="fw-bold mt-2">Workout Mix</h6>
+                        <p class="text-secondary small">High-energy workout songs</p>
+                        <button class="btn btn-sm btn-outline-light" onclick="loadSamplePlaylist('workout')">Try
+                            It</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPlaylistData = null;
+
+    async function extractPlaylist() {
+        const urlInput = document.getElementById('playlistUrl');
+        const btn = document.getElementById('extractBtn');
+        const loading = document.getElementById('playlistLoading');
+        const error = document.getElementById('playlistError');
+        const result = document.getElementById('playlistResult');
+
+        const url = urlInput.value.trim();
+
+        if (!url) {
+            showPlaylistError('Please enter a playlist URL');
+            return;
+        }
+
+        if (!url.includes('spotify.com/playlist/')) {
+            showPlaylistError('Please enter a valid Spotify playlist URL');
+            return;
+        }
+
+        // UI Reset
+        hideElements([result, error]);
+        showElements([loading]);
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Scraping...';
+
+        try {
+            const response = await fetch('/scrape-playlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: url })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showPlaylistError(data.error || 'Failed to scrape playlist data');
+                return;
+            }
+
+            currentPlaylistData = data;
+            displayPlaylistResult(data);
+            showElements([result]);
+
+        } catch (err) {
+            console.error('Scrape error:', err);
+            showPlaylistError('Failed to scrape playlist data. Please try again.');
+        } finally {
+            hideElements([loading]);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-music-note-list me-2"></i>Extract Playlist';
+        }
+    }
+
+    function displayPlaylistResult(data) {
+        const info = data.playlist_info;
+        document.getElementById('playlistImage').src = info.image_url;
+        document.getElementById('playlistTitle').textContent = info.title;
+        document.getElementById('playlistDesc').textContent = info.description;
+        document.getElementById('playlistOwner').textContent = info.owner;
+        document.getElementById('trackCount').textContent = info.total_tracks_scraped;
+        document.getElementById('totalDuration').textContent = info.total_duration_str;
+        document.getElementById('playlistLink').href = info.url;
+
+        displayTracks(data.tracks);
+    }
+
+    function displayTracks(tracks) {
+        const tracksList = document.getElementById('tracksList');
+        tracksList.innerHTML = '';
+
+        tracks.forEach((track, index) => {
+            const trackElement = document.createElement('div');
+            trackElement.className = 'song-item d-flex align-items-center mb-3 p-3';
+            trackElement.style.cssText = 'background: rgba(255,255,255,0.05); border-radius: 12px; transition: all 0.3s ease;';
+
+            const trackNumber = track.index || index + 1;
+            const searchQuery = `${track.title} ${track.artist}`.replace(/[^a-zA-Z0-9 ]/g, '');
+
+            trackElement.innerHTML = `
+            <div class="track-number-container me-3" style="position: relative; width: 50px; height: 50px; cursor: pointer;" 
+                 onclick="playTrackPreview('${track.title}', this)">
+                <div class="track-number" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 600; color: var(--text-secondary);">${trackNumber}</div>
+                <img src="${track.image_url || 'https://via.placeholder.com/50'}" 
+                     class="track-image rounded" style="width: 50px; height: 50px; object-fit: cover; opacity: 0; transition: opacity 0.3s ease;" 
+                     alt="Track cover">
+                <div class="play-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.3s ease;">
+                    <i class="bi bi-play-circle-fill" style="font-size: 24px; color: var(--accent-green);"></i>
+                </div>
+            </div>
+            <div class="flex-grow-1">
+                <div class="fw-bold mb-1">${track.title}</div>
+                <div class="text-secondary small">${track.artist} • ${track.album}</div>
+                <div class="progress-container" style="display: none; margin-top: 8px;">
+                    <div class="progress" style="height: 4px; background: rgba(255,255,255,0.2);">
+                        <div class="progress-bar bg-success" style="width: 0%; transition: width 0.15s linear;"></div>
+                    </div>
+                    <div class="time-info text-secondary small mt-1">00:00 / 00:00</div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="text-secondary small" style="min-width: 50px;">${track.duration}</div>
+                <a href="https://open.spotify.com/search/${encodeURIComponent(track.title)}" target="_blank" 
+                   class="btn btn-sm btn-outline-success" title="Open in Spotify">
+                    <i class="bi bi-spotify"></i>
+                </a>
+                <button class="btn btn-sm btn-outline-danger" onclick="openYouTubeRedirect('${track.title}', this)" title="Watch on YouTube">
+                    <i class="bi bi-youtube"></i>
+                </button>
+            </div>
+        `;
+
+            // Add hover effects
+            trackElement.addEventListener('mouseenter', function () {
+                this.style.background = 'rgba(255,255,255,0.1)';
+                this.style.transform = 'translateY(-2px)';
+                const img = this.querySelector('.track-image');
+                const number = this.querySelector('.track-number');
+                const playOverlay = this.querySelector('.play-overlay');
+                img.style.opacity = '1';
+                number.style.opacity = '0';
+                playOverlay.style.opacity = '1';
+            });
+
+            trackElement.addEventListener('mouseleave', function () {
+                this.style.background = 'rgba(255,255,255,0.05)';
+                this.style.transform = 'translateY(0)';
+                const img = this.querySelector('.track-image');
+                const number = this.querySelector('.track-number');
+                const playOverlay = this.querySelector('.play-overlay');
+                img.style.opacity = '0';
+                number.style.opacity = '1';
+                playOverlay.style.opacity = '0';
+            });
+
+            tracksList.appendChild(trackElement);
+        });
+    }
+
+    function showPlaylistError(message) {
+        const error = document.getElementById('playlistError');
+        const errorText = document.getElementById('playlistErrorText');
+        errorText.textContent = message;
+        showElements([error]);
+    }
+
+    function downloadPlaylistData() {
+        if (!currentPlaylistData) return;
+
+        const dataStr = JSON.stringify(currentPlaylistData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${currentPlaylistData.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_playlist.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        showToast('Playlist data downloaded!', 'success');
+    }
+
+    function exportToCSV() {
+        if (!currentPlaylistData) return;
+
+        let csv = 'Track Number,Title,Artist,Album,Duration\n';
+        currentPlaylistData.tracks.forEach(track => {
+            csv += `${track.index || ''},"${track.title}","${track.artist}","${track.album}",${track.duration}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${currentPlaylistData.playlist_info.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_tracks.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        showToast('CSV exported successfully!', 'success');
+    }
+
+    function sharePlaylist() {
+        if (!currentPlaylistData) return;
+
+        const info = currentPlaylistData.playlist_info;
+        const shareText = `Check out this playlist: ${info.title} - ${info.url}`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: info.title,
+                text: shareText,
+                url: info.url
+            });
+        } else {
+            navigator.clipboard.writeText(shareText).then(() => {
+                showToast('Playlist link copied to clipboard!', 'success');
+            });
+        }
+    }
+
+    function sortTracks(sortBy) {
+        if (!currentPlaylistData) return;
+
+        const tracks = [...currentPlaylistData.tracks];
+
+        if (sortBy === 'title') {
+            tracks.sort((a, b) => a.title.localeCompare(b.title));
+        } else if (sortBy === 'duration') {
+            tracks.sort((a, b) => {
+                const aDuration = a.duration.split(':').reduce((acc, time) => (60 * acc) + +time);
+                const bDuration = b.duration.split(':').reduce((acc, time) => (60 * acc) + +time);
+                return bDuration - aDuration;
+            });
+        } else if (sortBy === 'artist') {
+            tracks.sort((a, b) => a.artist.localeCompare(b.artist));
+        }
+
+        displayTracks(tracks);
+        showToast(`Tracks sorted by ${sortBy}`, 'success');
+    }
+
+    let currentAudio = null;
+    let youtubeFrame = null;
+    let player = null;
+    let playTimer = null;
+    let progressTimer = null;
+    let currentTrackContainer = null;
+    let isPaused = false;
+    let pausedTime = 0;
+    
+    // Load YouTube API
+    (function() {
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(tag);
+    })();
+    
+    window.onYouTubeIframeAPIReady = function() {
+        console.log('YouTube API ready');
+    };
+    
+    function extractVideoId(url) {
+        const regexList = [
+            /v=([^&]+)/,
+            /youtu\.be\/([^?&]+)/,
+            /\/embed\/([^?&]+)/
+        ];
+        for (const r of regexList) {
+            const m = url.match(r);
+            if (m && m[1]) return m[1];
+        }
+        return null;
+    }
+    
+    function fmt(s) {
+        s = Math.max(0, Math.floor(s));
+        const m = Math.floor(s/60);
+        const sec = s % 60;
+        return String(m).padStart(2,'0') + ":" + String(sec).padStart(2,'0');
+    }
+    
+    async function playTrackPreview(musicTitle, container) {
+        const progressContainer = container.parentElement.querySelector('.progress-container');
+        const progressBar = progressContainer.querySelector('.progress-bar');
+        const timeInfo = progressContainer.querySelector('.time-info');
+        const playOverlay = container.querySelector('.play-overlay i');
+        
+        // If same track and paused, resume
+        if (currentTrackContainer === container && isPaused && player) {
+            player.playVideo();
+            isPaused = false;
+            playOverlay.className = 'bi bi-pause-circle-fill';
+            return;
+        }
+        
+        // If playing, pause current track
+        if (player && currentTrackContainer === container) {
+            player.pauseVideo();
+            isPaused = true;
+            playOverlay.className = 'bi bi-play-circle-fill';
+            return;
+        }
+        
+        // Stop any existing preview
+        if (player) {
+            stopPreview();
+        }
+        
+        currentTrackContainer = container;
+        progressContainer.style.display = 'block';
+        playOverlay.className = 'bi bi-hourglass-split';
+        
+        try {
+            const response = await fetch('/get-yt-link-by-music-name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ music_name: musicTitle })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.youtube_url) {
+                const videoId = extractVideoId(data.youtube_url);
+                if (videoId) {
+                    // Check if video is playable
+                    checkVideoAvailability(videoId, () => {
+                        startYouTubePreview(videoId, progressBar, timeInfo, playOverlay);
+                    }, () => {
+                        showToast('Preview not available for this track', 'error');
+                        progressContainer.style.display = 'none';
+                        playOverlay.className = 'bi bi-play-circle-fill';
+                    });
+                } else {
+                    throw new Error('Invalid video ID');
+                }
+            } else {
+                throw new Error('Video not found');
+            }
+        } catch (error) {
+            showToast('Preview not available', 'error');
+            progressContainer.style.display = 'none';
+            playOverlay.className = 'bi bi-play-circle-fill';
+        }
+    }
+    
+    function checkVideoAvailability(videoId, onSuccess, onError) {
+        const testPlayer = new YT.Player(document.createElement('div'), {
+            height: '1',
+            width: '1',
+            videoId: videoId,
+            events: {
+                onReady: function(event) {
+                    try {
+                        const duration = event.target.getDuration();
+                        if (duration && duration > 0) {
+                            onSuccess();
+                        } else {
+                            onError();
+                        }
+                        event.target.destroy();
+                    } catch (e) {
+                        onError();
+                        event.target.destroy();
+                    }
+                },
+                onError: function(event) {
+                    onError();
+                    event.target.destroy();
+                }
+            }
+        });
+    }
+    
+    function startYouTubePreview(videoId, progressBar, timeInfo, playOverlay) {
+        const playerDiv = document.createElement('div');
+        playerDiv.id = 'hiddenPlayer';
+        playerDiv.style.cssText = 'position: fixed; left: -10000px; top: 0; width: 320px; height: 180px;';
+        document.body.appendChild(playerDiv);
+        
+        player = new YT.Player('hiddenPlayer', {
+            height: '180',
+            width: '320',
+            videoId: videoId,
+            playerVars: { autoplay: 0, controls: 0 },
+            events: {
+                onReady: function() {
+                    const duration = player.getDuration() || 180;
+                    const maxStart = Math.max(0, Math.floor(duration - 30));
+                    const startSec = Math.floor(Math.random() * Math.max(1, maxStart + 1));
+                    const playDuration = Math.floor(Math.random() * 21) + 10;
+                    const endSec = Math.min(startSec + playDuration, duration);
+                    
+                    player.seekTo(startSec, true);
+                    setTimeout(() => {
+                        player.playVideo();
+                        isPaused = false;
+                        playOverlay.className = 'bi bi-pause-circle-fill';
+                        startProgressLoop(startSec, endSec, progressBar, timeInfo);
+                    }, 350);
+                    
+                    playTimer = setTimeout(() => stopPreview(), (endSec - startSec) * 1000);
+                }
+            }
+        });
+    }
+    
+    function startProgressLoop(startSec, endSec, progressBar, timeInfo) {
+        const duration = endSec - startSec;
+        progressTimer = setInterval(() => {
+            if (!player) return;
+            let cur = player.getCurrentTime();
+            if (cur < startSec) cur = startSec;
+            if (cur > endSec) cur = endSec;
+            const elapsed = cur - startSec;
+            const percent = Math.max(0, Math.min(100, (elapsed / duration) * 100));
+            progressBar.style.width = percent + '%';
+            timeInfo.textContent = fmt(elapsed) + " / " + fmt(duration);
+        }, 150);
+    }
+    
+    function stopPreview() {
+        if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+        if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+        if (player) {
+            player.destroy();
+            player = null;
+            const playerDiv = document.getElementById('hiddenPlayer');
+            if (playerDiv) playerDiv.remove();
+        }
+        
+        // Reset current track state
+        if (currentTrackContainer) {
+            const playOverlay = currentTrackContainer.querySelector('.play-overlay i');
+            if (playOverlay) playOverlay.className = 'bi bi-play-circle-fill';
+            
+            const progressContainer = currentTrackContainer.parentElement.querySelector('.progress-container');
+            if (progressContainer) {
+                progressContainer.style.display = 'none';
+                progressContainer.querySelector('.progress-bar').style.width = '0%';
+                progressContainer.querySelector('.time-info').textContent = '00:00 / 00:00';
+            }
+        }
+        
+        currentTrackContainer = null;
+        isPaused = false;
+        pausedTime = 0;
+    }
+
+    async function playYouTubePreview(searchQuery, button) {
+        if (youtubeFrame) {
+            closeYouTubePreview();
+            return;
+        }
+
+        button.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+
+        try {
+            const response = await fetch('/get-youtube-url', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: searchQuery })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.embed_url) {
+                openYouTubePreview(data.embed_url, searchQuery, button);
+            } else {
+                button.innerHTML = '<i class="bi bi-play-fill"></i>';
+                showToast('Video not found', 'error');
+            }
+        } catch (error) {
+            button.innerHTML = '<i class="bi bi-play-fill"></i>';
+            showToast('Failed to load preview', 'error');
+        }
+    }
+
+    function openYouTubePreview(embedUrl, title, button) {
+        youtubeFrame = document.createElement('div');
+        youtubeFrame.className = 'youtube-frame-container';
+        youtubeFrame.innerHTML = `
+        <div class="youtube-frame-overlay preview-frame" onclick="closeYouTubePreview()"></div>
+        <div class="youtube-frame">
+            <div class="youtube-frame-header d-flex justify-content-between align-items-center p-3">
+                <h6 class="mb-0">🎵 ${title}</h6>
+                <button class="btn btn-sm btn-outline-light" onclick="closeYouTubePreview()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <iframe width="50vmax" height="30vmax" 
+                    src="${embedUrl}" 
+                    frameborder="0"
+                    allow="autoplay" 
+                    allowfullscreen></iframe>
+        </div>
+    `;
+
+        document.body.appendChild(youtubeFrame);
+        button.innerHTML = '<i class="bi bi-pause-fill"></i>';
+
+        // Auto-close after 30 seconds
+        setTimeout(() => {
+            closeYouTubePreview();
+        }, 30000);
+    }
+
+    function closeYouTubePreview() {
+        if (youtubeFrame) {
+            youtubeFrame.remove();
+            youtubeFrame = null;
+        }
+        // Reset all play buttons
+        document.querySelectorAll('.btn-outline-light').forEach(btn => {
+            if (btn.innerHTML.includes('pause')) {
+                btn.innerHTML = '<i class="bi bi-play-fill"></i>';
+            }
+        });
+    }
+
+
+
+    async function openYouTubeRedirect(musicTitle, button) {
+        const originalHtml = button.innerHTML;
+        button.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div>';
+        button.disabled = true;
+
+        try {
+            const response = await fetch('/get-yt-link-by-music-name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ music_name: musicTitle })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.youtube_url) {
+                window.open(data.youtube_url, '_blank');
+                showToast('Opening YouTube video', 'success');
+            } else {
+                showToast('Video not found', 'error');
+            }
+        } catch (error) {
+            showToast('Failed to load video', 'error');
+        } finally {
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+        }
+    }
+
+
+
+    function filterTracks() {
+        const searchTerm = document.getElementById('trackSearch').value.toLowerCase();
+        if (!currentPlaylistData) return;
+
+        const filteredTracks = currentPlaylistData.tracks.filter(track =>
+            track.title.toLowerCase().includes(searchTerm) ||
+            track.artist.toLowerCase().includes(searchTerm) ||
+            track.album.toLowerCase().includes(searchTerm)
+        );
+
+        displayTracks(filteredTracks);
+    }
+
+    function loadSamplePlaylist(type) {
+        const sampleUrls = {
+            'tophits': 'https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M',
+            'chill': 'https://open.spotify.com/playlist/37i9dQZF1DX0XUsuxWHRQd',
+            'workout': 'https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP'
+        };
+
+        document.getElementById('playlistUrl').value = sampleUrls[type];
+        extractPlaylist();
+    }
+
+    // Auto-extract if URL is provided in query params
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = urlParams.get('url');
+        const urlInput = document.getElementById('playlistUrl');
+
+        if (url && urlInput) {
+            urlInput.value = url;
+            setTimeout(() => extractPlaylist(), 500);
+        }
+
+        // Add enter key support
+        if (urlInput) {
+            urlInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    extractPlaylist();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

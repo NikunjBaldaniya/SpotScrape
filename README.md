@@ -35,7 +35,7 @@ A modern, fast, and responsive web application for extracting Spotify metadata w
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/SpotScrape.git
+git clone https://github.com/NikunjBaldaniya/SpotScrape.git
 cd SpotScrape
 ```
 

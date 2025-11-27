@@ -1,4 +1,5 @@
-# 🎵 SpotScrape - Modern Spotify Data Extractor
+
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=33&pause=1000&color=22F700&width=435&lines=SpotScrape;Modern+Spotify+Data+Extractor)](https://git.io/typing-svg)
 
 A modern, fast, and responsive web application for extracting Spotify metadata without API keys. Built with Flask and featuring a sleek dark theme interface.
 

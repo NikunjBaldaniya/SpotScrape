@@ -37,7 +37,10 @@ class History(db.Model):
     image_url = db.Column(db.String(500))
     spotify_url = db.Column(db.String(500))
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationship to User model
+    user = db.relationship('User', backref=db.backref('history', lazy=True, cascade='all, delete-orphan'))
 
 # --- Scraper Function ---
 def scrape_spotify(url):
@@ -75,8 +78,12 @@ def index():
 
 @app.route('/history')
 def history():
-    # Get last 20 searches
-    items = History.query.order_by(History.date.desc()).limit(20).all()
+    if 'user_id' not in session:
+        return redirect(url_for('signin'))
+    
+    user_id = session['user_id']
+    # Get last 20 searches for logged-in user only
+    items = History.query.filter_by(user_id=user_id).order_by(History.date.desc()).limit(20).all()
     return render_template('history.html', items=items)
 
 @app.route('/playlist')
@@ -153,16 +160,17 @@ def get_data():
     data = scrape_spotify(url)
     
     if data:
-        # Always store with current date and time
-        new_entry = History(
-            title=data['title'],
-            description=data['description'],
-            image_url=data['image_url'],
-            spotify_url=data['spotify_url'],
-            user_id=session.get('user_id')
-        )
-        db.session.add(new_entry)
-        db.session.commit()
+        # Only store history for logged-in users
+        if 'user_id' in session:
+            new_entry = History(
+                title=data['title'],
+                description=data['description'],
+                image_url=data['image_url'],
+                spotify_url=data['spotify_url'],
+                user_id=session['user_id']
+            )
+            db.session.add(new_entry)
+            db.session.commit()
         return jsonify(data)
     else:
         return jsonify({'error': 'Could not extract data. Page might be restricted or invalid.'}), 500
@@ -187,16 +195,17 @@ def scrape_playlist():
         data = scraper.scrape()
         
         if data:
-            # Always save to history with current date and time
-            new_entry = History(
-                title=data['playlist_info']['title'],
-                description=data['playlist_info']['description'],
-                image_url=data['playlist_info']['image_url'],
-                spotify_url=url,
-                user_id=session.get('user_id')
-            )
-            db.session.add(new_entry)
-            db.session.commit()
+            # Only save to history for logged-in users
+            if 'user_id' in session:
+                new_entry = History(
+                    title=data['playlist_info']['title'],
+                    description=data['playlist_info']['description'],
+                    image_url=data['playlist_info']['image_url'],
+                    spotify_url=url,
+                    user_id=session['user_id']
+                )
+                db.session.add(new_entry)
+                db.session.commit()
             
             return jsonify(data)
         else:
@@ -275,8 +284,12 @@ def get_yt_link_by_music_name():
 
 @app.route('/delete-history-item/<int:item_id>', methods=['DELETE'])
 def delete_history_item(item_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Authentication required'}), 401
+    
     try:
-        item = History.query.get_or_404(item_id)
+        # Only allow users to delete their own history items
+        item = History.query.filter_by(id=item_id, user_id=session['user_id']).first_or_404()
         db.session.delete(item)
         db.session.commit()
         return jsonify({'success': True})
@@ -347,21 +360,25 @@ def auth_delete_account():
 
 @app.route('/clear-history')
 def clear_history():
-    if 'user_id' in session:
-        History.query.filter_by(user_id=session['user_id']).delete()
-    else:
-        History.query.filter_by(user_id=None).delete()
+    if 'user_id' not in session:
+        return jsonify({'error': 'Authentication required'}), 401
+    
+    # Only clear history for the logged-in user
+    History.query.filter_by(user_id=session['user_id']).delete()
     db.session.commit()
     return jsonify({'success': True})
 
 if __name__ == '__main__':
     with app.app_context():
         try:
-            # Try to query the database to check if user_id column exists
-            History.query.first()
-            db.create_all()
-        except Exception:
-            # If there's an error (missing column), drop and recreate tables
+            # Check if the database schema is compatible
+            result = db.session.execute("SELECT user_id FROM history WHERE user_id IS NULL LIMIT 1")
+            # If we reach here, old schema exists with nullable user_id
+            print("Updating database schema...")
             db.drop_all()
+            db.create_all()
+            print("Database schema updated successfully!")
+        except Exception:
+            # Either table doesn't exist or schema is already correct
             db.create_all()
     app.run(debug=True, host='0.0.0.0', port=8000)

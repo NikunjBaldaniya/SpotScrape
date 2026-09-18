@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SpotScrape | Modern Spotify Data Extractor{% endblock %}</title>
+    <meta name="description"
+        content="Modern, fast, and responsive Spotify metadata extractor with synced lyrics and streaming player embeds.">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-card.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='favicon.ico') }}" alt="Website Logo" width="38px" class="me-2 rounded-circle">
+                <span class="spotify-green">Spot</span>Scrape
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-house me-1"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search-page"><i class="bi bi-search me-1"></i>Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about"><i class="bi bi-info-circle me-1"></i>About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/faqs"><i class="bi bi-question-circle me-1"></i>FAQs</a>
+                    </li>
+                    <!-- Theme selector disabled: SpotScrape uses the fixed dark theme. -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 100px; min-height: 70vh;">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Fullscreen Spotify Embed Modal -->
+    <div id="spotifyEmbedOverlay" class="embed-fullscreen-overlay d-none">
+        <div class="embed-fullscreen-inner spotify-embed-inner">
+            <div class="embed-modal-header">
+                <div class="embed-modal-title text-truncate me-2">
+                    <i class="bi bi-spotify text-success"></i>
+                    <span id="spotifyEmbedTitle">Spotify Player</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <button onclick="shareSpotifyLinkFromModal()" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center" title="Share Spotify Link">
+                        <i class="bi bi-share me-1"></i><span>Share</span>
+                    </button>
+                    <a id="spotifyOpenLink" href="#" target="_blank" class="btn btn-outline-success btn-sm rounded-pill d-inline-flex align-items-center">
+                        <i class="bi bi-box-arrow-up-right me-1"></i><span>Open in Spotify</span>
+                    </a>
+                    <button class="embed-modal-close" onclick="closeSpotifyEmbed()" title="Close (Esc)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="embed-modal-body spotify-embed-wrapper p-2 p-sm-3">
+                <iframe id="spotifyEmbedIframe" data-testid="embed-iframe" style="border-radius:12px" src="" width="100%" height="351" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen YouTube Embed Modal -->
+    <div id="youtubeEmbedOverlay" class="embed-fullscreen-overlay d-none">
+        <div class="embed-fullscreen-inner">
+            <div class="embed-modal-header">
+                <div class="embed-modal-title text-truncate me-2">
+                    <i class="bi bi-youtube text-danger"></i>
+                    <span id="youtubeEmbedTitle">YouTube Player</span>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <button onclick="shareYouTubeLinkFromModal()" class="btn btn-outline-danger btn-sm rounded-pill d-inline-flex align-items-center" title="Share YouTube Link">
+                        <i class="bi bi-share me-1"></i><span>Share</span>
+                    </button>
+                    <a id="youtubeOpenLink" href="#" target="_blank" class="btn btn-outline-danger btn-sm rounded-pill d-inline-flex align-items-center">
+                        <i class="bi bi-box-arrow-up-right me-1"></i><span>Open on YouTube</span>
+                    </a>
+                    <button class="embed-modal-close" onclick="closeYouTubeEmbed()" title="Close (Esc)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="embed-modal-body youtube-embed-wrapper">
+                <iframe id="youtubeEmbedIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Lyrics Modal -->
+    <div id="lyricsOverlay" class="lyrics-fullscreen-overlay d-none">
+        <div class="lyrics-modal-inner">
+            <div class="lyrics-modal-header">
+                <div class="lyrics-modal-title text-truncate me-2">
+                    <i class="bi bi-music-note-beamed text-info"></i>
+                    <span id="lyricsModalTitle">Song Lyrics</span>
+                </div>
+                <div class="lyrics-modal-actions flex-shrink-0">
+                    <button class="embed-modal-close" onclick="closeLyricsModal()" title="Close (Esc)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lyrics Dual Preview Bar (Synced LRC vs Plain Text + Copy) -->
+            <div class="lyrics-tabs-bar d-none" id="lyricsTabsBar">
+                <div class="lyrics-tabs-inner">
+                    <div class="lyrics-tab-toggle-group">
+                        <button class="search-tab-btn active btn-sm" id="tabSyncedLyrics" onclick="switchLyricsPreview('synced')">
+                            <i class="bi bi-file-earmark-code me-1"></i><span>Synced LRC</span>
+                        </button>
+                        <button class="search-tab-btn btn-sm" id="tabPlainLyrics" onclick="switchLyricsPreview('plain')">
+                            <i class="bi bi-file-earmark-text me-1"></i><span>Plain Text</span>
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-light btn-sm rounded-pill" onclick="copyActiveLyrics()" id="copyLyricsBtn" title="Copy Lyrics">
+                        <i class="bi bi-clipboard me-1"></i><span>Copy</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="lyrics-modal-body" id="lyricsBody">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-success" role="status"></div>
+                    <p class="mt-3 text-secondary">Searching for lyrics...</p>
+                </div>
+            </div>
+
+            <div class="lyrics-download-bar d-none" id="lyricsDownloadBar">
+                <div class="lyrics-download-inner">
+                    <div class="lyrics-download-group">
+                        <span class="text-secondary small d-none d-sm-inline"><i class="bi bi-download me-1"></i>Download:</span>
+                        <button class="btn btn-outline-success btn-sm rounded-pill" onclick="downloadLyrics('lrc')">
+                            <i class="bi bi-file-earmark-code me-1"></i>.LRC
+                        </button>
+                        <button class="btn btn-outline-light btn-sm rounded-pill" onclick="downloadLyrics('txt')">
+                            <i class="bi bi-file-earmark-text me-1"></i>.TXT
+                        </button>
+                    </div>
+                    <button class="btn btn-outline-info btn-sm rounded-pill lyrics-copy-bottom-btn" onclick="copyActiveLyrics()">
+                        <i class="bi bi-clipboard-check me-1"></i><span>Copy Text</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Universal Share Modal -->
+    <div id="shareModalOverlay" class="embed-fullscreen-overlay d-none">
+        <div class="embed-fullscreen-inner share-modal-inner">
+            <div class="embed-modal-header">
+                <div class="embed-modal-title text-truncate me-2">
+                    <i class="bi bi-share-fill text-success me-2"></i>
+                    <span id="shareModalTitle">Share Options</span>
+                </div>
+                <button class="embed-modal-close" onclick="closeShareModal()" title="Close (Esc)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-3 p-sm-4">
+                <p class="text-secondary small mb-3">Choose a link option below to copy or share directly:</p>
+
+                <!-- Option 1: Spotify Direct Link -->
+                <div class="share-option-card p-3 mb-3 rounded-4" style="background: rgba(29, 185, 84, 0.08); border: 1px solid rgba(29, 185, 84, 0.25);">
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-spotify text-success fs-5"></i>
+                            <strong class="text-white">Spotify Link</strong>
+                        </div>
+                        <span class="badge bg-success bg-opacity-25 text-success small">Spotify Direct</span>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="shareSpotifyUrlInput" class="form-control bg-dark text-white border-secondary font-monospace" readonly>
+                        <button class="btn btn-success" onclick="copyToClipboard(document.getElementById('shareSpotifyUrlInput').value); showToast('Spotify link copied!', 'success');">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                        <button class="btn btn-outline-success" onclick="shareSpotifyLink(document.getElementById('shareSpotifyUrlInput').value, document.getElementById('shareModalTitle').textContent)">
+                            <i class="bi bi-share me-1"></i>Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Option 2: YouTube Link -->
+                <div id="shareYtOptionCard" class="share-option-card p-3 mb-3 rounded-4" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25);">
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-youtube text-danger fs-5"></i>
+                            <strong class="text-white">YouTube Link</strong>
+                        </div>
+                        <span class="badge bg-danger bg-opacity-25 text-danger small">YouTube Video</span>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="shareYtUrlInput" class="form-control bg-dark text-white border-secondary font-monospace" readonly>
+                        <button class="btn btn-danger" onclick="copyToClipboard(document.getElementById('shareYtUrlInput').value); showToast('YouTube link copied!', 'success');">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="shareYouTubeLink(document.getElementById('shareYtUrlInput').value, document.getElementById('shareModalTitle').textContent)">
+                            <i class="bi bi-share me-1"></i>Share
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Option 3: SpotScrape Web App Page Link -->
+                <div class="share-option-card p-3 rounded-4" style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25);">
+                    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-globe text-info fs-5"></i>
+                            <strong class="text-white">SpotScrape Page Link</strong>
+                        </div>
+                        <span class="badge bg-info bg-opacity-25 text-info small">Web App Link</span>
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="sharePageUrlInput" class="form-control bg-dark text-white border-secondary font-monospace" readonly>
+                        <button class="btn btn-info text-white" onclick="copyToClipboard(document.getElementById('sharePageUrlInput').value); showToast('SpotScrape page link copied!', 'success');">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                        <button class="btn btn-outline-info" onclick="sharePageLink(document.getElementById('sharePageUrlInput').value, document.getElementById('shareModalTitle').textContent)">
+                            <i class="bi bi-share me-1"></i>Share
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 99999;"></div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 border-top" style="border-color: var(--border-color) !important;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <h6 class="fw-bold mb-3"><span class="spotify-green">Spot</span>Scrape</h6>
+                    <p class="text-secondary small mb-2">Modern, fast, and responsive Spotify data extractor with synced lyrics and streaming player embeds.</p>
+                    <p class="text-secondary small mb-0">Stateless architecture — your searches and extracts are preserved via bookmarkable URLs.</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="fw-bold mb-3">Features</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-1"><a href="/" class="text-secondary text-decoration-none">Extract URL</a></li>
+                        <li class="mb-1"><a href="/search-page" class="text-secondary text-decoration-none">Search Catalog</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 class="fw-bold mb-3">Support & Help</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-1"><a href="/faqs" class="text-secondary text-decoration-none">FAQs</a></li>
+                        <li class="mb-1"><a href="/issues" class="text-secondary text-decoration-none">Troubleshooting & Issues</a></li>
+                        <li class="mb-1"><a href="/about" class="text-secondary text-decoration-none">About SpotScrape</a></li>
+                        <li class="mb-1"><a href="/terms" class="text-secondary text-decoration-none">Terms & Conditions</a></li>
+                        <li class="mb-1"><a href="/privacy" class="text-secondary text-decoration-none">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="border-color: var(--border-color);">
+            <div class="text-center">
+                <p class="text-secondary small mb-1">&copy; 2026 SpotScrape. All data fetched is user responsibility. SpotScrape is not affiliated with Spotify AB or YouTube.</p>
+                <p class="text-secondary small mb-0">Made with <i class="bi bi-heart-fill text-danger"></i> for music lovers.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to Top">
+        <i class="bi bi-chevron-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

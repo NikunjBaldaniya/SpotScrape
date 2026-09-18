@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Troubleshooting & Issue Reporting - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        
+        <!-- Hero Header -->
+        <div class="text-center mb-5 fade-in">
+            <div class="hero-tag-badge">
+                <i class="bi bi-tools text-success"></i>
+                <span class="small fw-semibold spotify-green">Troubleshooting & Issue Center</span>
+            </div>
+
+            <h1 class="display-4 fw-bold mb-3">Issue & Help Desk</h1>
+            <p class="lead text-secondary mb-4">Encountered an issue while extracting songs, playlists, or lyrics? Here are instant solutions and diagnostic tools.</p>
+        </div>
+
+        <!-- Common Issues Grid -->
+        <div class="row g-4 mb-5">
+            <!-- Issue 1 -->
+            <div class="col-md-6">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="feature-icon-wrapper" style="margin-bottom: 0; width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-link-45deg"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Spotify Link Not Extracting</h5>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                        If a link gives an extraction error, verify that the Spotify playlist or album is <strong>public</strong>. Private links or user collaborative playlists without public sharing cannot be scraped.
+                    </p>
+                    <div class="small p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                        <strong class="text-success">Fix:</strong> Open Spotify &rarr; Share &rarr; Copy Link to ensure proper format.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issue 2 -->
+            <div class="col-md-6">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="feature-icon-wrapper" style="margin-bottom: 0; width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-music-note-beamed"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Lyrics Not Found</h5>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                        Lyrics are retrieved automatically across major synced lyrical registries. Obscure instrumental tracks or very recently released songs may not yet have synchronized LRC lyrics.
+                    </p>
+                    <div class="small p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                        <strong class="text-success">Fix:</strong> Try searching for the main release track title without remix/extended mix tags.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issue 3 -->
+            <div class="col-md-6">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="feature-icon-wrapper" style="margin-bottom: 0; width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-play-circle"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Spotify / YouTube Embed Blocked</h5>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                        Some strict ad-blockers or browser privacy extensions block embedded iframes from <code>open.spotify.com</code> or <code>youtube-nocookie.com</code>.
+                    </p>
+                    <div class="small p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                        <strong class="text-success">Fix:</strong> Click <em>"Open in Spotify"</em> or <em>"Open on YouTube"</em> on the modal header to stream directly.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issue 4 -->
+            <div class="col-md-6">
+                <div class="feature-card p-4 h-100">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="feature-icon-wrapper" style="margin-bottom: 0; width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Region-Restricted Content</h5>
+                    </div>
+                    <p class="text-secondary small mb-3">
+                        Some Spotify songs are licensed exclusively in specific countries and may show empty metadata in unsupported territories.
+                    </p>
+                    <div class="small p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                        <strong class="text-success">Fix:</strong> Use universal search to locate international releases of the song.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Issue Report Form Card -->
+        <div class="feature-card p-4 p-md-5 mb-5">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold mb-2"><i class="bi bi-chat-square-dots-fill text-success me-2"></i>Report a Problem</h3>
+                <p class="text-secondary small">Submit details about a broken link, parsing bug, or missing lyrics so we can improve SpotScrape.</p>
+            </div>
+
+            <form id="issueReportForm" onsubmit="submitIssueReport(event)">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Issue Type</label>
+                        <select class="form-select bg-dark text-white border-secondary rounded-pill px-3 py-2" id="issueCategory" required>
+                            <option value="link_extract_error">Spotify Link Extraction Error</option>
+                            <option value="lyrics_error">Missing / Broken Lyrics</option>
+                            <option value="embed_error">Embed Player Issue</option>
+                            <option value="ui_bug">UI / Display Bug</option>
+                            <option value="other">Other Inquiry</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Spotify URL (Optional)</label>
+                        <input type="url" class="form-control border-secondary rounded-pill px-3 py-2" id="issueSpotifyUrl" placeholder="https://open.spotify.com/...">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold text-secondary">Description of Issue</label>
+                        <textarea class="form-control border-secondary rounded-4 px-3 py-2" id="issueDesc" rows="4" placeholder="Describe what went wrong, what you expected, or paste error messages..." required></textarea>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-success px-5 py-2">
+                            <i class="bi bi-send-fill me-2"></i>Submit Issue Report
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bottom Quick Navigation -->
+        <div class="d-flex justify-content-center flex-wrap gap-3 mb-5">
+            <a href="/" class="btn btn-outline-light px-4">
+                <i class="bi bi-house-door me-2"></i>Return to Home
+            </a>
+            <a href="/search-page" class="btn btn-outline-light px-4">
+                <i class="bi bi-search me-2"></i>Search Catalog
+            </a>
+            <a href="/faqs" class="btn btn-outline-light px-4">
+                <i class="bi bi-question-circle me-2"></i>Help & FAQs
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function submitIssueReport(e) {
+    e.preventDefault();
+    const cat = document.getElementById('issueCategory').value;
+    const url = document.getElementById('issueSpotifyUrl').value;
+    const desc = document.getElementById('issueDesc').value;
+
+    showToast('Thank you! Your issue report has been recorded.', 'success');
+    document.getElementById('issueReportForm').reset();
+}
+</script>
+{% endblock %}

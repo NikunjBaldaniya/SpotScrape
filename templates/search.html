@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Spotify Catalog - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        
+        <!-- Search Screen Container (Search Bar, Tabs, Grid) -->
+        <div id="searchMainScreen">
+            <!-- Header -->
+            <div class="text-center mb-4 fade-in">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="bi bi-search me-2 text-success"></i>Search Spotify
+                </h1>
+                <p class="lead text-secondary">Search millions of songs, albums, artists, playlists, and podcasts with live Spotify & YouTube previews</p>
+            </div>
+
+            <!-- Search Box -->
+            <div class="feature-card p-4 mb-4">
+                <div class="search-box">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control"
+                            placeholder="Search song title, artist, album name, podcast..." aria-label="Search query">
+                        <button class="btn btn-success" type="button" onclick="searchSpotify()" id="searchBtn2">
+                            <i class="bi bi-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-3 text-center">
+                    <small class="text-secondary">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Click any item for full details and tracklist, or use the quick Spotify & YouTube preview buttons.
+                    </small>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="searchError" class="alert alert-danger d-none fade-in mb-4" role="alert"></div>
+
+            <!-- Search Skeleton -->
+            <div id="searchSkeleton" class="d-none mb-4">
+                <div class="loading-status-text mb-3">Searching Spotify catalog...</div>
+                <div class="search-result-grid">
+                    {% for i in range(8) %}
+                    <div class="search-result-card p-2">
+                        <div class="skeleton-box" style="aspect-ratio: 1; border-radius: 12px; margin-bottom: 10px;"></div>
+                        <div class="skeleton-box skeleton-text w-80 mb-2"></div>
+                        <div class="skeleton-box skeleton-text w-50"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Search Results Container -->
+            <div id="searchResults" class="d-none fade-in">
+                <!-- Tabs -->
+                <div class="search-tabs justify-content-center">
+                    <button class="search-tab-btn active" data-tab="tracks" onclick="switchSearchTab('tracks')">
+                        <i class="bi bi-music-note me-1"></i>Tracks
+                    </button>
+                    <button class="search-tab-btn" data-tab="albums" onclick="switchSearchTab('albums')">
+                        <i class="bi bi-disc me-1"></i>Albums
+                    </button>
+                    <button class="search-tab-btn" data-tab="artists" onclick="switchSearchTab('artists')">
+                        <i class="bi bi-person me-1"></i>Artists
+                    </button>
+                    <button class="search-tab-btn" data-tab="playlists" onclick="switchSearchTab('playlists')">
+                        <i class="bi bi-music-note-list me-1"></i>Playlists
+                    </button>
+                    <button class="search-tab-btn" data-tab="shows" onclick="switchSearchTab('shows')">
+                        <i class="bi bi-broadcast me-1"></i>Podcasts
+                    </button>
+                </div>
+
+                <!-- Grid output -->
+                <div class="search-result-grid mb-5" id="searchGrid"></div>
+            </div>
+        </div>
+
+        <!-- =======================================================
+             Item Detail Screen (Opens on item click with Back button)
+        ======================================================== -->
+        <div id="searchDetailScreen" class="d-none fade-in pb-5">
+            <!-- Navigation Back Button -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+                <button class="btn btn-outline-light rounded-pill px-4" onclick="closeSearchDetailScreen()">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Search Results
+                </button>
+                <div id="detailContentTypeBadge" class="content-badge">Item Details</div>
+            </div>
+
+            <!-- Detail Loading Skeleton -->
+            <div id="detailSkeleton" class="d-none mb-4">
+                <div class="modern-result-card p-4">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-5">
+                            <div class="skeleton-box skeleton-img"></div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="skeleton-box skeleton-title"></div>
+                            <div class="skeleton-box skeleton-text w-80"></div>
+                            <div class="skeleton-box skeleton-text w-50"></div>
+                            <div class="d-flex gap-2 mt-4">
+                                <div class="skeleton-box skeleton-btn"></div>
+                                <div class="skeleton-box skeleton-btn"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loading-status-text mt-4" id="detailSkeletonStatus">
+                        Fetching item details & tracklist...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail Error Box -->
+            <div id="detailErrorBox" class="alert alert-danger d-none fade-in" role="alert"></div>
+
+            <!-- Detail Result Card Container -->
+            <div id="detailContent" class="d-none fade-in">
+                <div class="modern-result-card">
+                    <!-- Header Section -->
+                    <div class="card-header-section">
+                        <div class="status-indicator">
+                            <i class="bi bi-info-circle-fill text-success me-2"></i>
+                            <span class="text-success fw-semibold">Item Details</span>
+                            <span id="detailBadgeType" class="content-badge ms-2">Track</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="card-main-content">
+                        <div class="row g-0">
+                            <!-- Album Art -->
+                            <div class="col-lg-5">
+                                <div class="album-art-container">
+                                    <div class="album-art-wrapper">
+                                        <img id="detailImage" src="" class="album-art" alt="Cover Art">
+                                        <div class="album-art-overlay">
+                                            <div class="play-indicator">
+                                                <i class="bi bi-music-note-beamed"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Info Section -->
+                            <div class="col-lg-7">
+                                <div class="track-info-section">
+                                    <div class="track-details">
+                                        <h2 class="track-title" id="detailTitle">Title</h2>
+                                        <p class="track-description" id="detailDesc">Details</p>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="action-buttons">
+                                        <div class="primary-actions">
+                                            <!-- Open Spotify -->
+                                            <a id="detailSpotifyLink" href="#" target="_blank" class="btn-spotify">
+                                                <i class="bi bi-spotify"></i>
+                                                <span>Open Spotify</span>
+                                            </a>
+
+                                            <!-- Spotify Embed -->
+                                            <button class="btn-spotify-embed" id="detailSpotifyEmbedBtn" style="display: none;">
+                                                <i class="bi bi-play-circle-fill"></i>
+                                                <span>Spotify Player</span>
+                                            </button>
+
+                                            <!-- YouTube Embed -->
+                                            <button class="btn-youtube" id="detailYouTubeEmbedBtn" style="display: none;">
+                                                <i class="bi bi-youtube"></i>
+                                                <span>YouTube Video</span>
+                                            </button>
+
+                                            <!-- Lyrics Button -->
+                                            <button class="btn-lyrics" id="detailLyricsBtn" style="display: none;">
+                                                <i class="bi bi-music-note-beamed"></i>
+                                                <span>Lyrics</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="secondary-actions">
+                                            <button onclick="shareDetailData()" class="btn-action" title="Share Options">
+                                                <i class="bi bi-share-fill text-success"></i>
+                                            </button>
+                                            <button id="detailShareSpotifyBtn" onclick="shareSpotifyLink(window._currentDetailSpotifyUrl, document.getElementById('detailTitle').textContent)" class="btn-action" title="Share Spotify Link">
+                                                <i class="bi bi-spotify text-success"></i>
+                                            </button>
+                                            <button id="detailShareYouTubeBtn" onclick="shareYouTubeLink(window._currentDetailYtUrl, document.getElementById('detailTitle').textContent)" class="btn-action" title="Share YouTube Link" style="display: none;">
+                                                <i class="bi bi-youtube text-danger"></i>
+                                            </button>
+                                            <button id="detailSharePageBtn" onclick="sharePageLink(window.location.href, document.getElementById('detailTitle').textContent)" class="btn-action" title="Share SpotScrape Web Page Link">
+                                                <i class="bi bi-globe text-info"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collection Tracks Section -->
+                    <div id="detailTracksSection" class="d-none">
+                        <div class="playlist-section">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h5 class="playlist-title mb-0">
+                                    <i class="bi bi-music-note-list me-2"></i>Tracks & Episodes
+                                </h5>
+                                <span class="badge bg-secondary" id="detailTrackCount">0 items</span>
+                            </div>
+                            <div class="tracks-container" id="detailSongsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

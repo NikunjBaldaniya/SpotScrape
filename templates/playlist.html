@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Collections & Search - SpotScrape{% endblock %}
+
+{% block content %}
+<script>
+    // Auto-redirect to the unified search page preserving any ?url= parameter
+    const params = new URLSearchParams(window.location.search);
+    const url = params.get('url');
+    if (url) {
+        window.location.href = `/?url=${encodeURIComponent(url)}`;
+    } else {
+        window.location.href = '/search-page';
+    }
+</script>
+<div class="text-center my-5 py-5">
+    <div class="spinner-border text-success mb-3" role="status"></div>
+    <h4 class="text-secondary">Redirecting to Search...</h4>
+</div>
+{% endblock %}

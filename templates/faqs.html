@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+
+{% block title %}Frequently Asked Questions - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        
+        <!-- Hero Header -->
+        <div class="text-center mb-5 fade-in">
+            <div class="hero-tag-badge">
+                <div class="equalizer">
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                </div>
+                <span class="small fw-semibold spotify-green">Knowledge Base & Help Center</span>
+            </div>
+
+            <h1 class="display-4 fw-bold mb-3">Frequently Asked Questions</h1>
+            <p class="lead text-secondary mb-4">Everything you need to know about extracting Spotify metadata, streaming embeds, and synced lyrics.</p>
+
+            <!-- FAQ Live Search Bar -->
+            <div class="search-box mb-4">
+                <div class="input-group">
+                    <input type="text" id="faqSearchInput" class="form-control" placeholder="Search any question (e.g. lyrics, embeds, API, export)..." aria-label="Search FAQs" oninput="filterFaqs()">
+                    <span class="d-none d-sm-flex align-items-center pe-3 text-secondary">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="d-flex flex-wrap justify-content-center gap-2 mb-2" id="faqCategories">
+                <button type="button" class="search-tab-btn active" data-cat="all" onclick="filterFaqCategory('all')">
+                    <i class="bi bi-grid-fill me-1"></i>All Questions
+                </button>
+                <button type="button" class="search-tab-btn" data-cat="general" onclick="filterFaqCategory('general')">
+                    <i class="bi bi-info-circle-fill me-1"></i>General & Extraction
+                </button>
+                <button type="button" class="search-tab-btn" data-cat="lyrics" onclick="filterFaqCategory('lyrics')">
+                    <i class="bi bi-music-note-beamed me-1"></i>Lyrics & Formats
+                </button>
+                <button type="button" class="search-tab-btn" data-cat="embeds" onclick="filterFaqCategory('embeds')">
+                    <i class="bi bi-play-circle-fill me-1"></i>Spotify & YouTube Embeds
+                </button>
+                <button type="button" class="search-tab-btn" data-cat="privacy" onclick="filterFaqCategory('privacy')">
+                    <i class="bi bi-shield-lock-fill me-1"></i>Privacy & Legal
+                </button>
+            </div>
+        </div>
+
+        <!-- Accordion FAQs List -->
+        <div class="accordion faq-accordion mb-5" id="faqAccordion">
+
+            <!-- FAQ 1 -->
+            <div class="accordion-item faq-item" data-cat="general" data-keywords="what is spotscrape how it works metadata no api keys extraction">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <span class="faq-cat-badge general">General</span>
+                        <span>What is SpotScrape and how does it work?</span>
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        SpotScrape is a modern, fast, and completely free web application designed to extract rich Spotify metadata (tracks, albums, playlists, artists, and podcasts) with synced lyrics and streaming player embeds.
+                        <div class="mt-3 p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                            <div class="d-flex align-items-center gap-2 text-success fw-semibold mb-1">
+                                <i class="bi bi-check-circle-fill"></i> How to use:
+                            </div>
+                            <div class="small text-secondary">
+                                Simply paste any public Spotify link into the search box on the <a href="/" class="text-success text-decoration-none">Home page</a>, or search by song/artist keywords on the <a href="/search-page" class="text-success text-decoration-none">Search Catalog</a> page.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="accordion-item faq-item" data-cat="general" data-keywords="free cost premium payment restrictions rate limits unlimited">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        <span class="faq-cat-badge general">General</span>
+                        <span>Is SpotScrape 100% free with no registration or limits?</span>
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, SpotScrape is <strong>100% free forever</strong>. There are no subscriptions, no premium tiers, no forced registrations, and no artificial rate limits. You can explore unlimited tracks, albums, playlists, and lyrics at any time.
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="accordion-item faq-item" data-cat="lyrics" data-keywords="lyrics synced lrc txt download synchronized timestamps find lyrics">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        <span class="faq-cat-badge lyrics">Lyrics</span>
+                        <span>How does the Synced & Plain Lyrics feature work?</span>
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        SpotScrape integrates automated lyrics retrieval that searches for synchronized and plain-text lyrics for any extracted song.
+                        <ul class="mt-2 mb-3 ps-3">
+                            <li class="mb-1"><strong>Instant Preview:</strong> Click the <span class="badge" style="background: rgba(167,139,250,0.2); color: #a78bfa;"><i class="bi bi-music-note-beamed me-1"></i>Lyrics</span> button to view full formatted lyrics inside our responsive modal.</li>
+                            <li class="mb-1"><strong>.LRC Format (Synced):</strong> Download synchronized lyrics files with precise timestamp tags (<code>[mm:ss.xx]</code>) ready for music players like VLC, Apple Music, or Kodi.</li>
+                            <li><strong>.TXT Format (Plain):</strong> Download clean, plain text lyrics without timestamps for reading or printing.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="accordion-item faq-item" data-cat="embeds" data-keywords="spotify embed youtube video preview player stream fullscreen">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                        <span class="faq-cat-badge embeds">Embeds</span>
+                        <span>How do Spotify and YouTube Fullscreen Embeds work?</span>
+                    </button>
+                </h2>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        SpotScrape allows you to preview and enjoy audio and video directly within the app without leaving the site:
+                        <ul class="mt-2 mb-0 ps-3">
+                            <li class="mb-2"><strong>Spotify Player:</strong> Click <em>Spotify Player</em> to open an in-browser official Spotify embed iframe that streams 30-second previews or full tracks for logged-in Spotify listeners.</li>
+                            <li><strong>YouTube Player:</strong> Click <em>YouTube Video</em> to open a fullscreen privacy-enhanced (<code>youtube-nocookie</code>) embed of the matching official music video.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="accordion-item faq-item" data-cat="privacy" data-keywords="stateless database account history storage login session refresh bookmark">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                        <span class="faq-cat-badge privacy">Privacy</span>
+                        <span>Why is SpotScrape stateless (no database / no login required)?</span>
+                    </button>
+                </h2>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        We believe in maximum privacy and simplicity. SpotScrape runs completely <strong>stateless</strong>:
+                        <ul class="mt-2 mb-0 ps-3">
+                            <li class="mb-1">We do not store your search history, credentials, or personal queries in any database.</li>
+                            <li class="mb-1"><strong>URL Query Driven:</strong> Your searches and extracts are reflected in the browser address bar (e.g. <code>/?url=...</code> or <code>/search-page?q=...</code>).</li>
+                            <li><strong>Refresh Safe:</strong> Refreshing the page or sharing the link directly with friends preserves your exact extracted data without losing state.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 6 -->
+            <div class="accordion-item faq-item" data-cat="general" data-keywords="formats track album artist playlist podcast show episode json export download">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
+                        <span class="faq-cat-badge general">General</span>
+                        <span>What Spotify content types are supported?</span>
+                    </button>
+                </h2>
+                <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        SpotScrape supports all standard Spotify media URLs:
+                        <div class="row g-2 mt-2">
+                            <div class="col-sm-6">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                                    <span class="badge bg-success me-1">Tracks</span> Individual songs with lyrics & previews
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                                    <span class="badge bg-primary me-1">Albums</span> Full album tracklists & release dates
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                                    <span class="badge bg-warning me-1">Playlists</span> Complete public playlist tracks
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                                    <span class="badge bg-info me-1">Artists</span> Artist biographies, followers & top tracks
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color);">
+                                    <span class="badge bg-secondary me-1">Podcasts</span> Shows & episode metadata with descriptions
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 7 -->
+            <div class="accordion-item faq-item" data-cat="general" data-keywords="download json data analysis export save structure">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq7">
+                        <span class="faq-cat-badge general">General</span>
+                        <span>Can I export and download the extracted data?</span>
+                    </button>
+                </h2>
+                <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes! Every extraction includes a one-click <span class="badge bg-secondary"><i class="bi bi-download me-1"></i>Download JSON</span> button. The JSON file contains clean, formatted fields (title, artist, artwork image URLs, durations in seconds and MM:SS, release dates, track URLs, and YouTube links).
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 8 -->
+            <div class="accordion-item faq-item" data-cat="privacy" data-keywords="terms conditions user responsibility legal copyright disclaimer">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq8">
+                        <span class="faq-cat-badge privacy">Privacy</span>
+                        <span>What are the user responsibilities & copyright policies?</span>
+                    </button>
+                </h2>
+                <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        SpotScrape operates solely as a client-side tool and metadata viewer for publicly indexed information. All data and lyrics retrieved or downloaded by the user are the <strong>sole responsibility of the user</strong>. SpotScrape does not host or distribute copyrighted music audio files. For more details, review our <a href="/terms" class="text-success text-decoration-none">Terms & Conditions</a>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 9 -->
+            <div class="accordion-item faq-item" data-cat="general" data-keywords="error private region locked restricted cannot extract fix">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq9">
+                        <span class="faq-cat-badge general">General</span>
+                        <span>What if a Spotify URL cannot be extracted?</span>
+                    </button>
+                </h2>
+                <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        If an extraction fails, verify that:
+                        <ul class="mt-2 mb-0 ps-3">
+                            <li>The Spotify URL is public (private or hidden playlists cannot be accessed).</li>
+                            <li>The URL format matches <code>open.spotify.com/track/...</code> (or album, playlist, artist, episode).</li>
+                            <li>The content is not blocked in your geographic region.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- No FAQ Results Found State -->
+        <div id="noFaqResults" class="feature-card p-5 text-center d-none mb-5">
+            <i class="bi bi-search fs-1 text-secondary mb-3 d-block"></i>
+            <h4 class="fw-bold mb-2">No matching questions found</h4>
+            <p class="text-secondary small mb-3">Try searching for keywords like "lyrics", "embed", "export", or "privacy".</p>
+            <button class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="resetFaqSearch()">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Search
+            </button>
+        </div>
+
+        <!-- Bottom Call to Action Card -->
+        <div class="feature-card p-4 p-md-5 text-center mb-5">
+            <h3 class="fw-bold mb-2">Still have questions?</h3>
+            <p class="text-secondary mb-4">Start exploring music or check out our full legal documentation.</p>
+            <div class="d-flex justify-content-center flex-wrap gap-3">
+                <a href="/" class="btn btn-success">
+                    <i class="bi bi-house me-2"></i>Go to Home
+                </a>
+                <a href="/search-page" class="btn btn-outline-light">
+                    <i class="bi bi-search me-2"></i>Search Catalog
+                </a>
+                <a href="/terms" class="btn btn-outline-light">
+                    <i class="bi bi-file-earmark-text me-2"></i>Terms & Conditions
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- FAQ Interactive Filter Script -->
+<script>
+let currentFaqCategory = 'all';
+
+function filterFaqs() {
+    const input = document.getElementById('faqSearchInput');
+    const query = input ? input.value.trim().toLowerCase() : '';
+    const items = document.querySelectorAll('.faq-item');
+    let visibleCount = 0;
+
+    items.forEach(item => {
+        const cat = item.dataset.cat;
+        const keywords = (item.dataset.keywords || '').toLowerCase();
+        const text = item.textContent.toLowerCase();
+
+        const matchesCat = (currentFaqCategory === 'all' || cat === currentFaqCategory);
+        const matchesQuery = (!query || text.includes(query) || keywords.includes(query));
+
+        if (matchesCat && matchesQuery) {
+            item.classList.remove('d-none');
+            visibleCount++;
+        } else {
+            item.classList.add('d-none');
+        }
+    });
+
+    const noResults = document.getElementById('noFaqResults');
+    const accordion = document.getElementById('faqAccordion');
+    if (noResults && accordion) {
+        if (visibleCount === 0) {
+            noResults.classList.remove('d-none');
+            accordion.classList.add('d-none');
+        } else {
+            noResults.classList.add('d-none');
+            accordion.classList.remove('d-none');
+        }
+    }
+}
+
+function filterFaqCategory(cat) {
+    currentFaqCategory = cat;
+    document.querySelectorAll('#faqCategories .search-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.cat === cat);
+    });
+    filterFaqs();
+}
+
+function resetFaqSearch() {
+    const input = document.getElementById('faqSearchInput');
+    if (input) input.value = '';
+    filterFaqCategory('all');
+}
+</script>
+{% endblock %}

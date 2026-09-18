@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}400 - Bad Request - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center text-center py-4 py-md-5 fade-in">
+    <div class="col-lg-7 col-md-9">
+        
+        <!-- Error Status Badge -->
+        <div class="hero-tag-badge mb-3" style="background: rgba(168, 85, 247, 0.12); border-color: rgba(168, 85, 247, 0.35);">
+            <i class="bi bi-link-45deg text-info"></i>
+            <span class="small fw-semibold text-info">Error 400 • Invalid Request Format</span>
+        </div>
+
+        <!-- Glowing 400 Heading -->
+        <div class="error-glitch-wrapper mb-3">
+            <h1 class="error-code-display" style="background: linear-gradient(135deg, #ffffff 0%, #d8b4fe 50%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">400</h1>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h2 class="fw-bold mb-3">Invalid Link or Parameters!</h2>
+        <p class="lead text-secondary mb-4">
+            The request could not be understood by the server. This often happens if the Spotify link is malformed or contains unsupported parameters.
+        </p>
+
+        <!-- Link Examples Card -->
+        <div class="feature-card p-4 text-start mb-4">
+            <h6 class="fw-bold mb-2 text-success"><i class="bi bi-check2-circle me-1"></i>Supported Link Formats:</h6>
+            <ul class="small text-secondary mb-0 font-monospace">
+                <li class="mb-1">https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC</li>
+                <li class="mb-1">https://open.spotify.com/album/4m2880jivSbbyEGAKfITCa</li>
+                <li class="mb-1">https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M</li>
+                <li>https://open.spotify.com/artist/1Xyo4u8uXC1ZmMpatF05PJ</li>
+            </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-center flex-wrap gap-3">
+            <a href="/" class="btn btn-success px-4">
+                <i class="bi bi-arrow-left me-2"></i>Try Again on Home
+            </a>
+            <a href="/search-page" class="btn btn-outline-light px-4">
+                <i class="bi bi-search me-2"></i>Search Catalog
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

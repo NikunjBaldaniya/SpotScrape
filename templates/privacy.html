@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Privacy Policy - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3">Privacy Policy</h1>
+        <p class="lead text-secondary">How we protect and handle your data</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="alert alert-info border-info p-3 mb-4" style="background: rgba(13, 202, 240, 0.1); border-radius: 12px;">
+                <i class="bi bi-info-circle me-2"></i>
+                For information regarding terms of service and user responsibilities, please review our <a href="/terms" class="fw-bold text-info">Terms & Conditions</a>.
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-check me-2 text-success"></i>Data Collection</h4>
+                <p class="text-secondary">SpotScrape collects minimal data to provide our services:</p>
+                <ul class="text-secondary">
+                    <li><strong>Account Information:</strong> Username, email, and encrypted password for registered users</li>
+                    <li><strong>Usage Data:</strong> Spotify URLs you extract and search history saved in your account</li>
+                    <li><strong>Technical Data:</strong> Basic browser headers necessary for HTTP communication</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-database me-2 text-success"></i>Data Usage</h4>
+                <p class="text-secondary">We use your data strictly to:</p>
+                <ul class="text-secondary">
+                    <li>Provide Spotify metadata extraction services</li>
+                    <li>Maintain your optional personal extraction history and statistics</li>
+                    <li>Deliver synchronized lyrics and media embed links</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-lock me-2 text-success"></i>Data Protection</h4>
+                <p class="text-secondary">Your privacy is protected:</p>
+                <ul class="text-secondary">
+                    <li><strong>Encryption:</strong> Passwords are hashed using SHA-256</li>
+                    <li><strong>No Sharing:</strong> We never sell or share your personal data with third parties</li>
+                    <li><strong>Local Storage:</strong> History is tied to your account and stored in your local SQLite database</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-globe me-2 text-success"></i>Third-Party Services</h4>
+                <p class="text-secondary">When using SpotScrape, the following external interactions occur:</p>
+                <ul class="text-secondary">
+                    <li><strong>Spotify:</strong> Public web pages are queried for metadata, and Spotify embed iframes stream preview clips directly from Spotify servers.</li>
+                    <li><strong>YouTube:</strong> Video search queries are dispatched to locate matching official music videos.</li>
+                    <li><strong>Lyrics Providers:</strong> Synchronized lyrics are queried via open lyric sources through `syncedlyrics`.</li>
+                </ul>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-success"></i>User Rights & Data Deletion</h4>
+                <p class="text-secondary">You retain 100% control over your data. You can clear your extraction history anytime or permanently delete your account through <a href="/settings" class="text-success">Account Settings</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

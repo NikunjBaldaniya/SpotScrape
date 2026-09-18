@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}404 - Track Not Found - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center text-center py-4 py-md-5 fade-in">
+    <div class="col-lg-7 col-md-9">
+        
+        <!-- Error Status Badge -->
+        <div class="hero-tag-badge mb-3">
+            <i class="bi bi-exclamation-octagon-fill text-warning"></i>
+            <span class="small fw-semibold text-warning">Error 404 • Page Not Found</span>
+        </div>
+
+        <!-- Glowing 404 Heading with Neon Shimmer -->
+        <div class="error-glitch-wrapper mb-3">
+            <h1 class="error-code-display">404</h1>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h2 class="fw-bold mb-3">Looks Like the Needle Skipped!</h2>
+        <p class="lead text-secondary mb-4">
+            The page, song, or playlist URL you are looking for doesn't exist, was moved, or had its frequency shifted into the void.
+        </p>
+
+        <!-- Search Box to recover quickly -->
+        <div class="feature-card p-4 mb-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-search me-2 text-success"></i>Search Spotify Catalog Instead</h5>
+            <div class="search-box">
+                <div class="input-group">
+                    <input type="text" id="quickSearchInput" class="form-control" placeholder="Search track, artist, album, playlist..." onkeypress="if(event.key==='Enter') window.location.href='/search-page?q=' + encodeURIComponent(this.value)">
+                    <button class="btn btn-success" type="button" onclick="const v=document.getElementById('quickSearchInput').value; if(v) window.location.href='/search-page?q=' + encodeURIComponent(v);">
+                        <i class="bi bi-search me-1"></i>Search
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Recovery Action Buttons -->
+        <div class="d-flex justify-content-center flex-wrap gap-3 mb-4">
+            <a href="/" class="btn btn-success px-4">
+                <i class="bi bi-house-door-fill me-2"></i>Back to Home
+            </a>
+            <a href="/search-page" class="btn btn-outline-light px-4">
+                <i class="bi bi-disc-fill me-2"></i>Search Catalog
+            </a>
+            <a href="/faqs" class="btn btn-outline-light px-4">
+                <i class="bi bi-question-circle-fill me-2"></i>Help & FAQs
+            </a>
+            <a href="/issues" class="btn btn-outline-light px-4">
+                <i class="bi bi-tools me-2"></i>Troubleshooting
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

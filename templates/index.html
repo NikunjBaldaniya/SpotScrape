@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block title %}SpotScrape - Extract Spotify Metadata & Lyrics{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row justify-content-center text-center mb-5">
+    <div class="col-lg-8">
+        <div class="fade-in">
+            <!-- Animated Badge -->
+            <div class="hero-tag-badge">
+                <div class="equalizer">
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                    <span class="equalizer-bar"></span>
+                </div>
+                <span class="small fw-semibold spotify-green">Modern Spotify Media & Lyrics Extractor</span>
+            </div>
+
+            <h1 class="display-4 fw-bold mb-3">Extract Spotify Metadata</h1>
+            <p class="lead text-secondary mb-4">Discover songs, albums, artists, playlists, and podcasts. Embed music, stream previews, and extract synchronized lyrics.</p>
+            
+            <!-- Search Input -->
+            <div class="search-box mb-3">
+                <div class="input-group">
+                    <input type="text" id="spotifyUrl" class="form-control" placeholder="Paste Spotify track, album, artist, or playlist URL..." aria-label="Spotify URL">
+                    <button class="btn btn-success" type="button" onclick="fetchData()" id="searchBtn">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>Extract Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Example URL Chips -->
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-4">
+                <span class="text-secondary small me-1"><i class="bi bi-magic me-1"></i>Try:</span>
+                <button type="button" class="sample-chip" onclick="setAndFetch('https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC')">
+                    <i class="bi bi-music-note"></i> Blinding Lights
+                </button>
+                <button type="button" class="sample-chip" onclick="setAndFetch('https://open.spotify.com/album/4m2880jivSbbyEGAKfITCa')">
+                    <i class="bi bi-disc"></i> Random Access Memories
+                </button>
+                <button type="button" class="sample-chip" onclick="setAndFetch('https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M')">
+                    <i class="bi bi-music-note-list"></i> Today's Top Hits
+                </button>
+            </div>
+            
+            <!-- Search Catalog Link -->
+            <div>
+                <a href="/search-page" class="text-secondary small text-decoration-none">
+                    <i class="bi bi-search me-1 text-success"></i>Looking to search by song/artist name instead? <span class="spotify-green fw-semibold">Try Search Catalog &rarr;</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Skeleton Loading Placeholder -->
+<div id="skeletonLoader" class="d-none mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="modern-result-card p-4">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-5">
+                        <div class="skeleton-box skeleton-img"></div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="skeleton-box skeleton-title"></div>
+                        <div class="skeleton-box skeleton-text w-80"></div>
+                        <div class="skeleton-box skeleton-text w-50"></div>
+                        <div class="d-flex gap-2 mt-4">
+                            <div class="skeleton-box skeleton-btn"></div>
+                            <div class="skeleton-box skeleton-btn"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="loading-status-text mt-4" id="skeletonStatus">
+                    Fetching Spotify metadata...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Alert -->
+<div id="errorBox" class="alert alert-danger d-none fade-in mx-auto mb-4" style="max-width: 700px; border-radius: 16px;" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <span id="errorText"></span>
+</div>
+
+<!-- Result Card -->
+<div id="resultCard" class="d-none fade-in mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <div class="modern-result-card">
+                <!-- Header Section -->
+                <div class="card-header-section">
+                    <div class="status-indicator">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                        <span class="text-success fw-semibold">Successfully Extracted</span>
+                        <span id="contentType" class="content-badge ms-2">Track</span>
+                    </div>
+                    <div class="equalizer d-none d-sm-inline-flex">
+                        <span class="equalizer-bar"></span>
+                        <span class="equalizer-bar"></span>
+                        <span class="equalizer-bar"></span>
+                        <span class="equalizer-bar"></span>
+                    </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="card-main-content">
+                    <div class="row g-0">
+                        <!-- Album Art Section -->
+                        <div class="col-lg-5">
+                            <div class="album-art-container">
+                                <div class="album-art-wrapper">
+                                    <img id="resImage" src="" class="album-art" alt="Cover Art">
+                                    <div class="album-art-overlay">
+                                        <div class="play-indicator">
+                                            <i class="bi bi-music-note-beamed"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Info Section -->
+                        <div class="col-lg-7">
+                            <div class="track-info-section">
+                                <div class="track-details">
+                                    <h2 class="track-title" id="resTitle">Song Title</h2>
+                                    <p class="track-description" id="resDesc">Artist • Album • Year</p>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="action-buttons">
+                                    <div class="primary-actions">
+                                        <!-- Open in Spotify -->
+                                        <a id="resLink" href="#" target="_blank" class="btn-spotify">
+                                            <i class="bi bi-spotify"></i>
+                                            <span>Open Spotify</span>
+                                        </a>
+
+                                        <!-- Spotify Embed Player Button -->
+                                        <button class="btn-spotify-embed" id="spotifyEmbedBtn" style="display: none;">
+                                            <i class="bi bi-play-circle-fill"></i>
+                                            <span>Spotify Player</span>
+                                        </button>
+
+                                        <!-- YouTube Embed Player Button -->
+                                        <button class="btn-youtube" id="youtubeEmbedBtn" style="display: none;">
+                                            <i class="bi bi-youtube"></i>
+                                            <span>YouTube Video</span>
+                                        </button>
+
+                                        <!-- Lyrics Button -->
+                                        <button class="btn-lyrics" id="lyricsBtn" style="display: none;">
+                                            <i class="bi bi-music-note-beamed"></i>
+                                            <span>Lyrics</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="secondary-actions">
+                                        <button onclick="shareData()" class="btn-action" title="Share Options">
+                                            <i class="bi bi-share-fill text-success"></i>
+                                        </button>
+                                        <button id="shareSpotifyBtn" onclick="shareSpotifyLink(window._currentResultSpotifyUrl, document.getElementById('resTitle').textContent)" class="btn-action" title="Share Spotify Link">
+                                            <i class="bi bi-spotify text-success"></i>
+                                        </button>
+                                        <button id="shareYouTubeBtn" onclick="shareYouTubeLink(window._currentResultYtUrl, document.getElementById('resTitle').textContent)" class="btn-action" title="Share YouTube Link" style="display: none;">
+                                            <i class="bi bi-youtube text-danger"></i>
+                                        </button>
+                                        <button id="sharePageBtn" onclick="sharePageLink(window.location.href, document.getElementById('resTitle').textContent)" class="btn-action" title="Share SpotScrape Web Page Link">
+                                            <i class="bi bi-globe text-info"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Playlist / Collection Tracks Section -->
+                <div id="playlistSongs" class="d-none">
+                    <div class="playlist-section">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="playlist-title mb-0">
+                                <i class="bi bi-music-note-list me-2"></i>Collection Tracks
+                            </h5>
+                            <span class="badge bg-secondary" id="trackCountHeader">0 tracks</span>
+                        </div>
+                        <div class="tracks-container" id="songsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5">
+    <div class="col-12 text-center mb-4">
+        <h2 class="fw-bold">All-In-One Spotify Tool</h2>
+        <p class="text-secondary">Explore rich metadata, streaming embeds, and lyrics without friction</p>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="feature-card text-center p-4 h-100">
+            <div class="feature-icon-wrapper">
+                <i class="bi bi-music-note-beamed"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Synced & Plain Lyrics</h5>
+            <p class="text-secondary small mb-0">Find timestamped LRC and plain text lyrics for any track with instant preview and download.</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="feature-card text-center p-4 h-100">
+            <div class="feature-icon-wrapper">
+                <i class="bi bi-play-circle-fill"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Spotify & YouTube Embeds</h5>
+            <p class="text-secondary small mb-0">Stream preview players for Spotify and watch matching YouTube music videos directly in fullscreen.</p>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="feature-card text-center p-4 h-100">
+            <div class="feature-icon-wrapper">
+                <i class="bi bi-search"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Universal Search</h5>
+            <p class="text-secondary small mb-0">Search across tracks, albums, artists, playlists, and shows with comprehensive metadata returns.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Terms & Conditions - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold mb-3">Terms & Conditions</h1>
+        <p class="lead text-secondary">Please read these terms carefully before using SpotScrape</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <!-- Critical User Responsibility Disclaimer Alert -->
+            <div class="alert alert-warning border-warning p-4 mb-4" style="background: rgba(255, 149, 0, 0.1); border-radius: 16px;">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-triangle-fill text-warning fs-3 me-3"></i>
+                    <div>
+                        <h5 class="fw-bold text-warning mb-2">User Responsibility & Limitation of Liability</h5>
+                        <p class="mb-0 small text-light">
+                            All data, metadata, media links, and lyrics fetched, accessed, downloaded, or exported through SpotScrape are the <strong>sole and exclusive responsibility of the user</strong>. SpotScrape operates solely as a client-side tool and search interface for publicly available web metadata. SpotScrape does not own, store, re-host, broadcast, or claim intellectual property rights over any retrieved music content.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-file-text me-2 text-success"></i>1. Acceptance of Terms</h4>
+                <p class="text-secondary">
+                    By accessing or using SpotScrape, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our service.
+                </p>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-lock me-2 text-success"></i>2. Service Usage & Educational Purpose</h4>
+                <p class="text-secondary">
+                    SpotScrape is provided for personal, non-commercial, informational, and educational purposes. You agree to use SpotScrape in compliance with all applicable local, national, and international laws, regulations, and third-party terms of service (including Spotify's and YouTube's Terms of Service).
+                </p>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-music-note me-2 text-success"></i>3. Intellectual Property Rights</h4>
+                <p class="text-secondary">
+                    All track names, artist names, album covers, playlist titles, podcast contents, and lyrics displayed within SpotScrape are the copyrighted property and trademarks of their respective rights holders, creators, labels, and publishers.
+                </p>
+                <p class="text-secondary small">
+                    SpotScrape is an independent open-source tool and is not affiliated, endorsed, sponsored, or associated with Spotify AB, YouTube LLC, Google LLC, or any music distributor.
+                </p>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-person-x me-2 text-success"></i>4. Disclaimer of Warranties</h4>
+                <p class="text-secondary">
+                    The service is provided on an "AS IS" and "AS AVAILABLE" basis without any warranties of any kind, whether express or implied. SpotScrape does not guarantee that metadata scraping, YouTube matching, or lyric fetching will be uninterrupted, error-free, or 100% accurate.
+                </p>
+            </div>
+
+            <div class="feature-card p-4 mb-4">
+                <h4 class="fw-bold mb-3"><i class="bi bi-arrow-repeat me-2 text-success"></i>5. Changes to Terms</h4>
+                <p class="text-secondary">
+                    We reserve the right to modify or replace these Terms at any time. Continued use of the service following any updates signifies your acceptance of the revised Terms.
+                </p>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

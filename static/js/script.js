@@ -45,6 +45,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const lyricsSongQuery = urlParams.get('song');
+    const lyricsArtistQuery = urlParams.get('artist');
+    const lyricsModeQuery = urlParams.get('mode');
+    const lyricsSongInput = document.getElementById('lyricsSearchSong');
+    const lyricsArtistInput = document.getElementById('lyricsSearchArtist');
+
+    if (lyricsSongQuery && lyricsSongInput) {
+        lyricsSongInput.value = lyricsSongQuery;
+        if (lyricsArtistInput) {
+            lyricsArtistInput.value = lyricsArtistQuery || '';
+        }
+        if (lyricsModeQuery) {
+            currentLyricsSearchMode = lyricsModeQuery;
+        }
+        searchLyricsByName(false);
+    }
+
     // Enter key on URL input
     if (urlInput) {
         urlInput.addEventListener('keypress', e => { if (e.key === 'Enter') fetchData(); });
@@ -53,6 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enter key on search input
     if (searchInput) {
         searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchSpotify(); });
+    }
+
+    if (lyricsSongInput) {
+        lyricsSongInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') searchLyricsByName();
+        });
+    }
+
+    if (lyricsArtistInput) {
+        lyricsArtistInput.addEventListener('keypress', e => {
+            if (e.key === 'Enter') searchLyricsByName();
+        });
     }
 
     // Close embed / lyrics modals on overlay click
@@ -115,6 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         searchSpotify(false);
                     }
                 }
+            }
+        }
+
+        const lyricsSongInput = document.getElementById('lyricsSearchSong');
+        const lyricsArtistInput = document.getElementById('lyricsSearchArtist');
+        const song = params.get('song');
+        const artist = params.get('artist');
+        const mode = params.get('mode');
+
+        if (lyricsSongInput) {
+            lyricsSongInput.value = song || lyricsSongInput.value;
+        }
+        if (lyricsArtistInput) {
+            lyricsArtistInput.value = artist || lyricsArtistInput.value;
+        }
+
+        if (song && (song !== '' || artist !== null)) {
+            if (mode) currentLyricsSearchMode = mode;
+            if (lyricsSongInput || lyricsArtistInput) {
+                searchLyricsByName(false);
             }
         }
     });
@@ -1030,6 +1079,165 @@ function closeShareModal() {
     const overlay = document.getElementById('shareModalOverlay');
     if (overlay) overlay.classList.add('d-none');
     document.body.style.overflow = '';
+}
+
+let currentLyricsSearchData = null;
+let currentLyricsSearchMode = 'synced';
+
+async function searchLyricsByName(updateUrl = true) {
+    const titleInput = document.getElementById('lyricsSearchSong');
+    const artistInput = document.getElementById('lyricsSearchArtist');
+    const errorBox = document.getElementById('lyricsSearchError');
+    const resultBox = document.getElementById('lyricsSearchResult');
+    const button = document.getElementById('lyricsSearchBtn');
+    const title = (titleInput ? titleInput.value.trim() : '');
+    const artist = (artistInput ? artistInput.value.trim() : '');
+
+    if (!title) {
+        if (errorBox) {
+            errorBox.classList.remove('d-none');
+            errorBox.textContent = 'Please enter a song name.';
+        }
+        return;
+    }
+
+    if (updateUrl) {
+        const params = new URLSearchParams();
+        params.set('song', title);
+        if (artist) params.set('artist', artist);
+        params.set('mode', currentLyricsSearchMode);
+        const url = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ song: title, artist, mode: currentLyricsSearchMode }, '', url);
+    }
+
+    if (errorBox) {
+        errorBox.classList.add('d-none');
+        errorBox.textContent = '';
+    }
+
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Searching…';
+    }
+
+    if (resultBox) {
+        resultBox.classList.add('d-none');
+    }
+
+    try {
+        const resp = await fetch('/lyrics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, artist })
+        });
+        const data = await resp.json();
+
+        if (!resp.ok || !(data.text_lyrics || data.lyrics)) {
+            if (errorBox) {
+                errorBox.classList.remove('d-none');
+                errorBox.textContent = data.error || 'Lyrics not found for that song.';
+            }
+            return;
+        }
+
+        currentLyricsSearchData = data;
+        currentLyricsSearchMode = 'synced';
+        renderLyricsSearchResult(data);
+    } catch (e) {
+        if (errorBox) {
+            errorBox.classList.remove('d-none');
+            errorBox.textContent = 'Network error while searching for lyrics.';
+        }
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-music-note-beamed me-2"></i>Search Lyrics';
+        }
+    }
+}
+
+function renderLyricsSearchResult(data) {
+    const resultBox = document.getElementById('lyricsSearchResult');
+    const titleEl = document.getElementById('lyricsSearchResultTitle');
+    const bodyEl = document.getElementById('lyricsSearchBody');
+    const syncedBtn = document.getElementById('lyricsSearchSyncedBtn');
+    const plainBtn = document.getElementById('lyricsSearchPlainBtn');
+
+    if (!resultBox || !titleEl || !bodyEl) return;
+
+    titleEl.textContent = data.title || 'Lyrics';
+    resultBox.classList.remove('d-none');
+
+    if (syncedBtn) syncedBtn.classList.toggle('active', currentLyricsSearchMode === 'synced');
+    if (plainBtn) plainBtn.classList.toggle('active', currentLyricsSearchMode === 'plain');
+
+    const content = currentLyricsSearchMode === 'synced'
+        ? (data.lyrics || data.text_lyrics || '')
+        : (data.text_lyrics || data.lyrics || '');
+
+    bodyEl.innerHTML = '';
+    const pre = document.createElement('pre');
+    pre.className = 'mb-0';
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.style.wordBreak = 'break-word';
+    pre.style.lineHeight = '1.9';
+    pre.style.fontSize = currentLyricsSearchMode === 'synced' ? '0.95rem' : '1.05rem';
+    pre.style.fontFamily = currentLyricsSearchMode === 'synced' ? 'ui-monospace, SFMono-Regular, Menlo, monospace' : 'inherit';
+    pre.textContent = content || 'No lyrics available.';
+    bodyEl.appendChild(pre);
+}
+
+function switchLyricsSearchMode(mode) {
+    if (!currentLyricsSearchData) return;
+    currentLyricsSearchMode = mode;
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('mode', mode);
+    const url = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({ song: params.get('song'), artist: params.get('artist'), mode }, '', url);
+
+    renderLyricsSearchResult(currentLyricsSearchData);
+}
+
+async function downloadLyricsSearchFile(fmt) {
+    if (!currentLyricsSearchData) return;
+    try {
+        const resp = await fetch('/lyrics/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                format: fmt,
+                title: currentLyricsSearchData.title,
+                lyrics: currentLyricsSearchData.lyrics,
+                text_lyrics: currentLyricsSearchData.text_lyrics
+            })
+        });
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = (currentLyricsSearchData.title || 'lyrics').replace(/[^ -\u007F\w\s-]/g, '').trim().replace(/\s+/g, '_').toLowerCase() + '.' + fmt;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast(`Lyrics downloaded as .${fmt}`, 'success');
+    } catch (e) {
+        showToast('Download failed.', 'error');
+    }
+}
+
+function copyLyricsSearchResult() {
+    if (!currentLyricsSearchData) return;
+    const content = currentLyricsSearchMode === 'synced'
+        ? (currentLyricsSearchData.lyrics || currentLyricsSearchData.text_lyrics)
+        : (currentLyricsSearchData.text_lyrics || currentLyricsSearchData.lyrics);
+    if (!content) {
+        showToast('No lyrics content to copy', 'error');
+        return;
+    }
+    copyToClipboard(content);
+    showToast(currentLyricsSearchMode === 'synced' ? 'Synced lyrics copied to clipboard!' : 'Plain text lyrics copied to clipboard!', 'success');
 }
 
 function openShareModalFromResult() {

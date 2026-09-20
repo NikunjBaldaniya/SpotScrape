@@ -28,6 +28,12 @@ The app does not need a user account or a database.
 
 ![Track details](screen_shorts/search-track-detail.png)
 
+### Search lyrics by song and artist
+
+![Lyrics search result](screen_shorts/lyrics-search-result.png)
+
+The lyrics search page lets users type a song title and optional artist name, then choose synced LRC or plain-text lyrics. The result is preserved in the page URL, so refreshes and browser navigation keep the same search state.
+
 ### Album data
 
 ![Album extract result](screen_shorts/extract-album.png)

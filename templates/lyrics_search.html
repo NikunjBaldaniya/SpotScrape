@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Lyrics - SpotScrape{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="text-center mb-4 fade-in">
+            <h1 class="display-5 fw-bold mb-3">
+                <i class="bi bi-music-note-beamed me-2 text-success"></i>Search Lyrics
+            </h1>
+            <p class="lead text-secondary">Enter a song name and optional artist name to find synced or plain-text lyrics.</p>
+        </div>
+
+        <div class="feature-card lyrics-search-form-card p-4 mb-4">
+            <div class="row g-3 align-items-end lyrics-search-form-row">
+                <div class="col-lg-5 col-md-12">
+                    <label for="lyricsSearchSong" class="form-label text-secondary small">Song Name</label>
+                    <input type="text" id="lyricsSearchSong" class="form-control lyrics-search-input" placeholder="e.g. Shape of You" aria-label="Song name">
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <label for="lyricsSearchArtist" class="form-label text-secondary small">Artist Name(s)</label>
+                    <input type="text" id="lyricsSearchArtist" class="form-control lyrics-search-input" placeholder="e.g. Ed Sheeran" aria-label="Artist name">
+                </div>
+                <div class="col-lg-3 col-md-12 lyrics-search-action-col">
+                    <button class="btn btn-success lyrics-search-btn" type="button" id="lyricsSearchBtn" onclick="searchLyricsByName()">
+                        <i class="bi bi-music-note-beamed me-2"></i><span>Search Lyrics</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="lyricsSearchError" class="alert alert-danger d-none fade-in mb-4" role="alert"></div>
+
+        <div id="lyricsSearchResult" class="modern-result-card lyrics-search-result d-none p-4 fade-in">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                <h3 class="mb-0 lyrics-result-title" id="lyricsSearchResultTitle">Lyrics</h3>
+                <div class="btn-group btn-group-sm lyrics-search-toggle" role="group" aria-label="Lyrics format toggle">
+                    <button type="button" id="lyricsSearchSyncedBtn" class="btn btn-outline-success active" onclick="switchLyricsSearchMode('synced')">Synced LRC</button>
+                    <button type="button" id="lyricsSearchPlainBtn" class="btn btn-outline-light" onclick="switchLyricsSearchMode('plain')">Plain Text</button>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mb-3 flex-wrap">
+                <button class="btn btn-outline-light btn-sm rounded-pill" onclick="copyLyricsSearchResult()">
+                    <i class="bi bi-clipboard me-1"></i>Copy
+                </button>
+                <button class="btn btn-outline-success btn-sm rounded-pill" onclick="downloadLyricsSearchFile('lrc')">
+                    <i class="bi bi-file-earmark-code me-1"></i>.LRC
+                </button>
+                <button class="btn btn-outline-light btn-sm rounded-pill" onclick="downloadLyricsSearchFile('txt')">
+                    <i class="bi bi-file-earmark-text me-1"></i>.TXT
+                </button>
+            </div>
+
+            <div id="lyricsSearchBody" class="lyrics-search-output" style="min-height: 220px;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

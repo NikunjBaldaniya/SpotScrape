@@ -391,6 +391,115 @@ body::before {
     transform: scale(1.12) rotate(6deg);
 }
 
+/* Search Lyrics page styling */
+.lyrics-search-form-card {
+    border-radius: 22px;
+}
+
+.lyrics-search-form-row {
+    align-items: stretch;
+}
+
+.lyrics-search-input {
+    border-radius: 18px !important;
+    background: rgba(12, 16, 22, 0.82) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    color: var(--text-primary) !important;
+    min-height: 52px;
+    padding: 0.8rem 1rem;
+}
+
+.lyrics-search-input:focus {
+    border-color: rgba(29, 185, 84, 0.7) !important;
+    box-shadow: 0 0 0 0.18rem rgba(29, 185, 84, 0.18) !important;
+}
+
+.lyrics-search-action-col {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+}
+
+.lyrics-search-btn {
+    width: 100%;
+    min-height: 52px;
+    min-width: 0;
+    border-radius: 18px;
+    padding: 0.8rem 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.lyrics-search-btn span {
+    line-height: 1.2;
+}
+
+.lyrics-search-result {
+    background: linear-gradient(180deg, rgba(17, 22, 31, 0.96), rgba(10, 14, 20, 0.98));
+    border: 1px solid rgba(29, 185, 84, 0.25);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+.lyrics-result-title {
+    color: var(--text-primary);
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 0%, #bbf7d0 45%, #1DB954 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.lyrics-search-toggle {
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.lyrics-search-toggle .btn {
+    border-radius: 0;
+    min-width: 120px;
+    font-weight: 600;
+}
+
+.lyrics-search-toggle .btn:first-child {
+    border-radius: 999px 0 0 999px;
+}
+
+.lyrics-search-toggle .btn:last-child {
+    border-radius: 0 999px 999px 0;
+}
+
+.lyrics-search-output {
+    background: linear-gradient(180deg, rgba(11, 14, 20, 0.96), rgba(15, 20, 29, 0.98));
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 20px;
+    padding: 1.2rem 1.1rem;
+    color: var(--text-primary);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.lyrics-search-output pre {
+    background: transparent;
+    color: var(--text-primary);
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.lyrics-search-output {
+    background: linear-gradient(180deg, rgba(11, 14, 20, 0.96), rgba(12, 16, 22, 0.98));
+    border: 1px solid rgba(29, 185, 84, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 30px rgba(0,0,0,0.28);
+}
+
 /* Search Box & Responsive Input Group with Neon Breathing Focus */
 .search-box {
     position: relative;
@@ -1172,6 +1281,46 @@ body::before {
     .lyrics-modal-body { padding: 18px; }
     .lyrics-text { font-size: 0.95rem; }
     .search-result-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+
+    .lyrics-search-form-card {
+        padding: 1.1rem !important;
+    }
+
+    .lyrics-search-action-col {
+        width: 100%;
+    }
+
+    .lyrics-search-btn {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .lyrics-search-toggle {
+        width: 100%;
+    }
+
+    .lyrics-search-toggle .btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 991px) {
+    .lyrics-search-form-row > [class*="col-"] {
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .lyrics-search-action-col {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .lyrics-search-btn {
+        width: 100%;
+        min-height: 52px;
+    }
 }
 
 @media (max-width: 576px) {

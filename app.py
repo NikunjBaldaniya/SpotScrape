@@ -29,6 +29,10 @@ def index():
 def search_page():
     return render_template('search.html')
 
+@app.route('/lyrics-search')
+def lyrics_search_page():
+    return render_template('lyrics_search.html')
+
 @app.route('/playlist')
 def playlist():
     return redirect(url_for('search_page'))
